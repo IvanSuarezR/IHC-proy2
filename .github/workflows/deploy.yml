@@ -33,8 +33,8 @@ jobs:
       - name: 'Build and Deploy Frontend'
         run: |-
           gcloud builds submit ./ProyIHC-MiniApp \
-            --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/conductor-frontend \
-            --substitutions=_REACT_APP_API_URL="https://conductor-backend-${{ secrets.GCP_PROJECT_ID }}.us-central1.run.app",_REACT_APP_GOOGLE_MAPS_KEY="${{ secrets.REACT_APP_GOOGLE_MAPS_KEY }}"
+            --config ./ProyIHC-MiniApp/cloudbuild.yaml \
+            --substitutions=_IMAGE_NAME="gcr.io/${{ secrets.GCP_PROJECT_ID }}/conductor-frontend",_REACT_APP_API_URL="https://conductor-backend-${{ secrets.GCP_PROJECT_ID }}.us-central1.run.app",_REACT_APP_GOOGLE_MAPS_KEY="${{ secrets.REACT_APP_GOOGLE_MAPS_KEY }}"
           gcloud run deploy conductor-frontend \
             --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/conductor-frontend \
             --platform managed \

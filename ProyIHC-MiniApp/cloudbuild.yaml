@@ -1,0 +1,11 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build',
+      '-t', '$_IMAGE_NAME',
+      '--build-arg', '_REACT_APP_API_URL=$_REACT_APP_API_URL',
+      '--build-arg', '_REACT_APP_GOOGLE_MAPS_KEY=$_REACT_APP_GOOGLE_MAPS_KEY',
+      '.'
+    ]
+images:
+  - '$_IMAGE_NAME'
