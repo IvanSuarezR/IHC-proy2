@@ -8,6 +8,12 @@ ENV PYTHONUNBUFFERED 1
 # Establecer el directorio de trabajo
 WORKDIR /app
 
+# Instalar dependencias del sistema necesarias para compilar psycopg2
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
 # Instalar dependencias
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
