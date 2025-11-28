@@ -21,8 +21,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copiar el código de la aplicación
 COPY . /app/
 
+# Dar permisos de ejecución al entrypoint
+RUN chmod +x /app/entrypoint.sh
+
 # Exponer el puerto en el que correrá la aplicación
 EXPOSE 8080
 
 # Comando para ejecutar la aplicación
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "backend.wsgi:application"]
+CMD ["/app/entrypoint.sh"]
