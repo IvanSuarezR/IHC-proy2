@@ -14,7 +14,7 @@ const MapComponent = ({ onLocationSelect, onClose }) => {
 
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
-    googleMapsApiKey: "AIzaSyCpb8QkvuIvYhgxfidC6O6IMKgyK0fj560",
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_KEY,
   });
 
   useEffect(() => {

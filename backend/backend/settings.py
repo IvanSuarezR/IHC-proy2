@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,7 +26,8 @@ SECRET_KEY = 'django-insecure-2fv9%l@=nq54(xg*s4jkxqx3fpt-ylqjlt(cx(fu+4+^iqhg-n
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['10.0.2.2', '192.168.100.132', '127.0.0.1', 'chattable-hermine-nonperfectible.ngrok-free.dev']
+ALLOWED_HOSTS = ['10.0.2.2', '192.168.100.132', '127.0.0.1', 'chattable-hermine-nonperfectible.ngrok-free.dev',
+                 'conductor-backend-608918105626.us-central1.run.app']
 
 
 # Application definition
@@ -81,11 +83,11 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'ihc',
-        'USER': 'postgres',
-        'PASSWORD': '2427',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': os.environ.get('DB_NAME', 'ihc'),
+        'USER': os.environ.get('DB_USER', 'postgres'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', '2427'),
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'PORT': os.environ.get('DB_PORT', '5432'),
     }
 }
 

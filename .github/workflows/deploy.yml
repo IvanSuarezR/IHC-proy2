@@ -27,11 +27,14 @@ jobs:
           gcloud run deploy conductor-backend \
             --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/conductor-backend \
             --platform managed \
-            --region us-central1
+            --region us-central1 \
+            --set-env-vars "DB_NAME=${{ secrets.DB_NAME }},DB_USER=${{ secrets.DB_USER }},DB_PASSWORD=${{ secrets.DB_PASSWORD }},DB_HOST=${{ secrets.DB_HOST }},DB_PORT=${{ secrets.DB_PORT }}"
 
       - name: 'Build and Deploy Frontend'
         run: |-
-          gcloud builds submit ./ProyIHC-MiniApp --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/conductor-frontend
+          gcloud builds submit ./ProyIHC-MiniApp \
+            --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/conductor-frontend \
+            --substitutions=_REACT_APP_API_URL="https://conductor-backend-${{ secrets.GCP_PROJECT_ID }}.us-central1.run.app",_REACT_APP_GOOGLE_MAPS_KEY="${{ secrets.REACT_APP_GOOGLE_MAPS_KEY }}"
           gcloud run deploy conductor-frontend \
             --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/conductor-frontend \
             --platform managed \

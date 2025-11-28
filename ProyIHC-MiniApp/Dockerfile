@@ -4,6 +4,15 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
+
+# Aceptar argumentos de construcción
+ARG _REACT_APP_API_URL
+ARG _REACT_APP_GOOGLE_MAPS_KEY
+
+# Establecer variables de entorno para el build
+ENV REACT_APP_API_URL=$_REACT_APP_API_URL
+ENV REACT_APP_GOOGLE_MAPS_KEY=$_REACT_APP_GOOGLE_MAPS_KEY
+
 RUN npm run build
 
 # Etapa de producción
