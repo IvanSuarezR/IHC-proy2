@@ -27,8 +27,7 @@ jobs:
           gcloud run deploy conductor-backend \
             --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/conductor-backend \
             --platform managed \
-            --region us-central1 \
-            --allow-unauthenticated
+            --region us-central1
 
       - name: 'Build and Deploy Frontend'
         run: |-
@@ -36,5 +35,4 @@ jobs:
           gcloud run deploy conductor-frontend \
             --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/conductor-frontend \
             --platform managed \
-            --region us-central1 \
-            --allow-unauthenticated
+            --region us-central1
