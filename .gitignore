@@ -1,0 +1,36 @@
+# Entorno virtual de Python
+/ENTORNO/
+
+# Archivos de bytecode de Python
+*.pyc
+__pycache__/
+
+# Base de datos de desarrollo de Django
+db.sqlite3
+
+# Archivos de entorno
+.env
+.env.*
+
+# Dependencias de Node.js
+/ProyIHC-MiniApp/node_modules/
+
+# Archivos de build del frontend
+/ProyIHC-MiniApp/build/
+
+# Archivos de log y temporales
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Ejecutables
+ngrok.exe
+*.exe
+
+# Archivos del sistema operativo e IDE
+.DS_Store
+.vscode/
+.idea/
+
+# Archivos varios
+/ProyIHC-MiniApp/Subscribe.txt
