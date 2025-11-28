@@ -1,0 +1,31 @@
+.menu-header {
+  color: #000;
+  display: flex;
+  flex-direction: column; /* Logo arriba del título */
+  align-items: center;    /* Centrado horizontal */
+  justify-content: center;
+  margin-bottom: 20px;
+  padding: 10px;
+}
+
+.menu-header .logo {
+  width: 120px;      /* +20% del tamaño original (100px → 120px) */
+  max-width: 25vw;   /* Se adapta al tamaño de la pantalla */
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.menu-header h1 {
+  font-size: 1.8rem;
+  text-align: center;
+  margin: 0;
+}
+
+/* Botón del carrito */
+.btn-carrito {
+  display: block;
+  margin: 0 auto 20px auto;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+}

@@ -1,0 +1,6 @@
+/* src/Components/Cart/CartItem.css */
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}

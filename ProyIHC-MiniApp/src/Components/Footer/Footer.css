@@ -1,0 +1,17 @@
+/* Footer.css */
+.footer {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: #fff;
+  border-top: 1px solid #ccc;
+}
+
+.footer-btn {
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}

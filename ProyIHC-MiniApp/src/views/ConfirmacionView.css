@@ -1,0 +1,155 @@
+/* =============================
+   CONTENEDOR PRINCIPAL
+============================= */
+.confirm-container {
+  background-color: #fffaf5;
+  min-height: 100vh;
+  padding: 20px;
+  overflow-x: hidden;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;  /* <-- CENTRADO VERTICAL */
+  align-items: center;      /* <-- CENTRADO HORIZONTAL */
+  text-align: center;
+  color: #000;
+
+  font-size: 1.1rem;
+  gap: 25px; /* separación uniforme entre logo, check, título y detalles */
+}
+
+/* =============================
+   LOGO
+============================= */
+.logo {
+  width: 140px;
+  max-width: 35vw;
+  height: auto;
+
+  animation: fadeIn 0.7s ease-out;
+  border: 3px solid #e0c521;
+  border-radius: 12px;
+  padding: 5px;
+}
+
+/* desktop */
+@media (min-width: 768px) {
+  .logo {
+    width: 180px;
+  }
+}
+
+/* =============================
+   ICONO CHECK
+============================= */
+.confirm-icon {
+  font-size: 90px;
+  color: #4caf50;
+
+  animation: checkPop 0.6s ease-out forwards,
+             pulse 1.8s ease-in-out 0.6s infinite;
+}
+
+/* =============================
+   TÍTULO
+============================= */
+.confirm-title {
+  font-size: 2rem;
+  color: #333;
+  border-bottom: 2px solid #e0c521;
+  padding-bottom: 5px;
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* =============================
+   DETALLES DEL PEDIDO
+============================= */
+.confirm-details {
+  width: 100%;
+  max-width: 400px;
+  background-color: #fff3e0;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: left;
+  border: 2px solid #e0c521;
+  font-size: 1.15rem;
+}
+
+/* =============================
+   ESPACIO PARA IMAGEN
+============================= */
+.confirm-image-space {
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+  background-color: #eee;
+  border: 2px solid #e0c521;
+  margin: 0 auto; /* centrado horizontal */
+}
+
+/* =============================
+   BOTÓN VOLVER
+============================= */
+.btn-volver-menu {
+  background-color: #ffb300;
+  border: 2px solid #e0c521;
+  border-radius: 8px;
+  padding: 12px 18px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #000;
+  font-size: 1.15rem;
+}
+
+.btn-volver-menu:hover {
+  background-color: #e6a900;
+}
+
+/* =============================
+   ANIMACIONES
+============================= */
+@keyframes fadeIn {
+  0% { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes checkPop {
+  0% { transform: scale(0.2); opacity: 0; }
+  60% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+/* =============================
+   RESPONSIVE
+============================= */
+@media (min-width: 768px) {
+  .confirm-container {
+    padding: 40px;
+    font-size: 1.2rem;
+    gap: 35px;
+  }
+
+  .confirm-details {
+    padding: 25px;
+    font-size: 1.2rem;
+  }
+
+  .btn-volver-menu {
+    padding: 14px 22px;
+    font-size: 1.2rem;
+  }
+
+  .confirm-title {
+    font-size: 2.2rem;
+  }
+
+  .confirm-icon {
+    font-size: 100px;
+  }
+}

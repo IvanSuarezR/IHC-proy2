@@ -1,0 +1,166 @@
+/* ====== Carrito general ====== */
+.carrito-container {
+  padding: 20px;
+  /*background-color: rgb(19, 19, 52);*/
+  background-color: #fffaf5;
+  min-height: 100vh;     
+  width: 100%;           
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+  overflow-x: hidden;    
+  display: flex;
+  flex-direction: column;
+  align-items: center;   /* centra los items horizontalmente */
+}
+
+/* ====== Header ====== */
+.carrito-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 500px;      /* opcional para mantener centrado en pantallas grandes */
+  margin-bottom: 15px;
+}
+
+.carrito-header h2 {
+  color: #333;
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.btn-volver {
+  background-color: #ffb300;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: none;       /* elimina cualquier sombra predeterminada */
+  outline: none;          /* elimina borde al hacer focus */
+}
+
+/* ====== Lista de productos ====== */
+.cart-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 400px;      /* centra la lista en pantalla grande */
+}
+
+/* Cada producto */
+.cart-item {
+
+  display: flex;
+  align-items: center;
+  background-color: #fff3e0;
+  /*background-color: rgb(19, 19, 52);*/
+  border-radius: 10px;
+  padding: 10px;
+  justify-content: center; /* centra contenido horizontalmente */
+  box-shadow: none;       /* asegura que no haya sombra */
+}
+
+/* ====== Imagen del producto ====== */
+.cart-image {
+  width: 80px;         
+  height: 80px;
+  border-radius: 12px;
+  object-fit: cover;
+  margin-right: 12px;
+  border: 1px solid #ddd;
+}
+
+/* ====== Información del producto ====== */
+.cart-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;  /* centra el texto dentro del item */
+}
+
+.cart-info h3 {
+  font-size: 1rem;
+  margin: 0;
+  color: #333;
+  text-align: center;
+}
+
+.cart-info p {
+  font-size: 0.9rem;
+  margin: 4px 0;
+  color: #000;
+  text-align: center;
+}
+
+/* ====== Acciones de cantidad ====== */
+.cart-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 5px 0;
+}
+
+.cart-actions span {
+  min-width: 25px;
+  text-align: center;
+  font-weight: bold;
+  color: #000;
+}
+
+/* Botones dentro del carrito */
+.cart-actions button,
+.btn-clear,
+.btn-pay {
+  box-shadow: none;   /* elimina sombra predeterminada */
+  outline: none;
+}
+
+/* ====== Pie de carrito ====== */
+.cart-footer {
+  margin-top: 20px;
+  text-align: center;
+  width: 100%;
+  max-width: 500px;
+}
+
+.cart-footer h3 {
+  margin-bottom: 12px;
+  color: #222;
+}
+
+.cart-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.btn-clear,
+.btn-pay {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* Colores de botones */
+/*vaciar carrito*/
+.btn-clear {
+  background-color: #f44336;
+  color: white;
+}
+
+.btn-pay {
+  background-color: #4caf50;
+  color: white;
+}
+
+/* ====== Carrito vacío ====== */
+.empty-cart {
+  text-align: center;
+  color: #000;
+  font-size: 2.5rem;
+  margin-top: 40px;
+}

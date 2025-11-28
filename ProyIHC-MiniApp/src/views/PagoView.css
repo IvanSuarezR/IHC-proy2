@@ -1,0 +1,93 @@
+/* =============================
+   CONTENEDOR GENERAL
+============================= */
+.pago-container {
+  background-color: #fffaf5;
+  min-height: 100vh;
+  padding: 20px;
+  color: #000;
+
+  font-size: 1.1rem; /* Aumenta tamaño de texto general */
+}
+
+/* =============================
+   OPCIONES DE PAGO
+============================= */
+.pago-opciones {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 20px 0;
+  padding: 15px;
+  border: 2px solid #e0c521; /* borde dorado */
+  border-radius: 10px;
+  background-color: #fff3e0; /* suave crema */
+}
+
+.pago-opciones label {
+  font-size: 1.15rem;
+  font-weight: 500;
+}
+
+/* =============================
+   BOTONES
+============================= */
+.pago-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.btn-volver,
+.btn-confirmar {
+  border: none;
+  border-radius: 8px;
+  padding: 12px 18px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1.1rem; /* texto más grande */
+}
+
+/* Botón volver */
+.btn-volver {
+  background-color: #f0c040; /* dorado suave */
+  color: #000;
+  border: 2px solid #e0c521; /* borde dorado */
+}
+
+/* Botón confirmar */
+.btn-confirmar {
+  background-color: #ffb300;
+  color: #000;
+  border: 2px solid #e0c521; /* borde dorado */
+}
+
+/* Hover */
+.btn-volver:hover {
+  background-color: #e6b835;
+}
+
+.btn-confirmar:hover {
+  background-color: #e6a900;
+}
+
+/* =============================
+   RESPONSIVE
+============================= */
+@media (min-width: 768px) {
+  .pago-container {
+    padding: 40px;
+    font-size: 1.2rem;
+  }
+
+  .pago-opciones {
+    gap: 15px;
+    padding: 20px;
+  }
+
+  .btn-volver,
+  .btn-confirmar {
+    padding: 14px 22px;
+    font-size: 1.15rem;
+  }
+}

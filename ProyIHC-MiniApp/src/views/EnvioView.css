@@ -1,0 +1,190 @@
+/* =============================
+   CONTENEDOR GENERAL
+============================= */
+.envio-container {
+  color: #000;
+  background-color: #fffaf5;
+  min-height: 100vh;
+  padding: 20px;
+  overflow-x: hidden;
+
+  font-size: 1.1rem; /* Aumenta tamaño de texto general */
+}
+
+/* =============================
+   LISTA, RESUMEN Y DIRECCIÓN
+============================= */
+.envio-list,
+.envio-summary,
+.envio-direccion {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 2px solid #e0c521; /* borde dorado */
+  border-radius: 10px;
+  background-color: #fff3e0; /* suave crema */
+}
+
+/* =============================
+   ITEM DE PRODUCTO
+============================= */
+.envio-item {
+  color: #000;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 1.1rem; /* Más grande */
+  font-weight: 500;
+}
+
+/* =============================
+   RESUMEN DE COSTOS
+============================= */
+.envio-summary p,
+.envio-summary h3 {
+  margin: 5px 0;
+  font-size: 1.1rem;
+}
+
+.envio-summary h3 {
+  font-size: 1.3rem;
+  color: #333;
+  font-weight: bold;
+}
+
+/* =============================
+   DIRECCIÓN DE ENVÍO
+============================= */
+.envio-direccion p {
+  font-weight: bold;
+  font-size: 1.15rem;
+}
+
+.envio-direccion input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  border-radius: 8px;
+  border: 2px solid #e0c521; /* borde dorado */
+  font-size: 1rem;
+  outline: none;
+}
+
+/* =============================
+   BOTONES
+============================= */
+.envio-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.btn-volver,
+.btn-pago {
+  border: none;
+  border-radius: 8px;
+  padding: 12px 18px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1.1rem; /* texto más grande */
+}
+
+/* Botón volver */
+.btn-volver {
+  background-color: #f0c040; /* dorado suave */
+  color: #000;
+  border: 2px solid #e0c521; /* borde dorado */
+}
+
+/* Botón pagar */
+.btn-pago {
+  background-color: #4caf50;
+  color: white;
+  border: 2px solid #2e7d32;
+}
+
+/* Hover */
+.btn-volver:hover {
+  background-color: #e6b835;
+}
+
+.btn-pago:hover {
+  background-color: #449d48;
+}
+
+/* =============================
+   RESPONSIVE
+============================= */
+@media (min-width: 768px) {
+  .envio-container {
+    padding: 40px;
+    font-size: 1.2rem;
+  }
+
+  .envio-item {
+    font-size: 1.2rem;
+  }
+
+  .btn-volver,
+  .btn-pago {
+    padding: 14px 22px;
+    font-size: 1.15rem;
+  }
+}
+
+/* =============================
+   MAPA MODAL
+============================= */
+.map-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.map-container {
+  width: 90%;
+  height: 80%;
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.btn-confirmar-ubicacion {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-cerrar-mapa {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 30px;
+  text-align: center;
+}
+
+.btn-confirmar-ubicacion:hover {
+  background-color: #449d48;
+}
