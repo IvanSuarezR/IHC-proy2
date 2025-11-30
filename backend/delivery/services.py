@@ -50,7 +50,7 @@ def initialize_firebase():
 initialize_firebase()
 
 def encontrar_conductor_mas_cercano(pedido):
-    conductores_disponibles = Conductor.objects.filter(
+    conductores_disponibles = Conductor.objects.select_related('ubicacion').filter(
         activo=True,
         con_pedido=False
     ).exclude(

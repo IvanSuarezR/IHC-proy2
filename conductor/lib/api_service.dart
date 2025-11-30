@@ -6,8 +6,8 @@ class ApiService {
   // Update this with the correct IP of your backend machine if running on a physical device.
   // Example: "http://192.168.1.5:8000/delivery" (check with 'ipconfig' or 'ifconfig')
   // Note: The previous path was /api, but the new backend configuration routes through /delivery
-  // final String baseUrl = "http://192.168.100.132:8000/delivery";
-  final String baseUrl = "https://conductor-backend-608918105626.us-central1.run.app/delivery";
+  final String baseUrl = "http://192.168.100.132:8000/delivery";
+  // final String baseUrl = "https://conductor-backend-608918105626.us-central1.run.app/delivery";
 
   Future<List<dynamic>> getConductores() async {
     final response = await http.get(Uri.parse('$baseUrl/conductores/'));
@@ -76,16 +76,12 @@ class ApiService {
   }
 
   Future<void> actualizarUbicacion(int conductorId, String coordenadas) async {
-    // The ubicaciones endpoint might not be set up for POST to create/update
-    // A common pattern is POST to /ubicaciones/ or PATCH to /ubicaciones/{conductor_id}/
-    // Assuming a POST to the collection, creating a new location record or updating if one exists.
     final response = await http.post(
-      Uri.parse('$baseUrl/ubicaciones/'),
+      Uri.parse('$baseUrl/conductores/$conductorId/actualizar_ubicacion/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(<String, dynamic>{
-        'conductor': conductorId,
+      body: jsonEncode(<String, String>{
         'coordenadas': coordenadas,
       }),
     );

@@ -27,6 +27,25 @@ class ConductorViewSet(viewsets.ModelViewSet):
         conductor.save()
         return Response({'status': 'conductor desactivado', 'activo': False})
 
+    @action(detail=True, methods=['post'])
+    def actualizar_ubicacion(self, request, pk=None):
+        conductor = self.get_object()
+        coordenadas = request.data.get('coordenadas')
+
+        if not coordenadas:
+            return Response(
+                {'error': 'coordenadas are required.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        ubicacion, created = Ubicacion.objects.update_or_create(
+            conductor=conductor,
+            defaults={'coordenadas': coordenadas}
+        )
+        
+        status_code = status.HTTP_201_CREATED if created else status.HTTP_200_OK
+        return Response(UbicacionSerializer(ubicacion).data, status=status_code)
+
 class ConductorActivoViewSet(viewsets.ReadOnlyModelViewSet):
     """
     A viewset that only returns active conductors.
@@ -34,39 +53,10 @@ class ConductorActivoViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Conductor.objects.filter(activo=True)
     serializer_class = ConductorSerializer
 
-class UbicacionViewSet(viewsets.ModelViewSet):
+class UbicacionViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    ViewSet para ver ubicaciones. La creación/actualización se maneja
+    a través de la acción en ConductorViewSet.
+    """
     queryset = Ubicacion.objects.all()
     serializer_class = UbicacionSerializer
-
-    def create(self, request, *args, **kwargs):
-        conductor_id = request.data.get('conductor')
-        coordenadas = request.data.get('coordenadas')
-
-        if not conductor_id or not coordenadas:
-            return Response(
-                {'error': 'conductor and coordenadas are required.'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        try:
-            conductor = Conductor.objects.get(id=conductor_id)
-        except Conductor.DoesNotExist:
-            return Response(
-                {'error': f'Conductor with id {conductor_id} does not exist.'},
-                status=status.HTTP_404_NOT_FOUND
-            )
-
-        # Update or create the location
-        ubicacion, created = Ubicacion.objects.update_or_create(
-            conductor=conductor,
-            defaults={'coordenadas': coordenadas}
-        )
-
-        serializer = self.get_serializer(ubicacion)
-        headers = self.get_success_headers(serializer.data)
-        
-        # Return 201 if created, 200 if updated
-        if created:
-            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-        else:
-            return Response(serializer.data, status=status.HTTP_200_OK, headers=headers)
