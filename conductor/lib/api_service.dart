@@ -6,8 +6,8 @@ class ApiService {
   // Update this with the correct IP of your backend machine if running on a physical device.
   // Example: "http://192.168.1.5:8000/delivery" (check with 'ipconfig' or 'ifconfig')
   // Note: The previous path was /api, but the new backend configuration routes through /delivery
-  final String baseUrl = "http://192.168.100.132:8000/delivery";
-  // final String baseUrl = "https://conductor-backend-608918105626.us-central1.run.app/delivery";
+  // final String baseUrl = "http://192.168.100.132:8000/delivery";
+  final String baseUrl = "https://conductor-backend-608918105626.us-central1.run.app/delivery";
 
   Future<List<dynamic>> getConductores() async {
     final response = await http.get(Uri.parse('$baseUrl/conductores/'));
