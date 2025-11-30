@@ -20,6 +20,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copiar el código de la aplicación
 COPY . /app/
+COPY firebase_credentials.json /app/firebase_credentials.json
 
 # Dar permisos de ejecución al entrypoint
 RUN chmod +x /app/entrypoint.sh

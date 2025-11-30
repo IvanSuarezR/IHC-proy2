@@ -26,7 +26,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace = "com.example.conductor"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -44,8 +44,8 @@ android {
         applicationId = "com.example.conductor"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        minSdkVersion flutter.minSdkVersion
+        targetSdk = 36
         versionCode = flutterVersionCode.toInteger()
         versionName = flutterVersionName
         multiDexEnabled true
@@ -61,6 +61,11 @@ android {
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.debug
         }
+    }
+
+    lint {
+        lintConfig file("lint.xml")
+        baseline file("lint-baseline.xml")
     }
 }
 

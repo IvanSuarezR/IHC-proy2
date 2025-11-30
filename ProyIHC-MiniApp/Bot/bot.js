@@ -28,7 +28,7 @@ bot.start(async (ctx) => {
         inline_keyboard: [[
           {
             text: '🍔 Abrir menú',
-            web_app: { url: 'https://chattable-hermine-nonperfectible.ngrok-free.dev/' }
+            web_app: { url: 'https://conductor-frontend-608918105626.us-central1.run.app/' }
           }
         ]]
       }
