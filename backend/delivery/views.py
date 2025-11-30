@@ -27,6 +27,13 @@ class ConductorViewSet(viewsets.ModelViewSet):
         conductor.save()
         return Response({'status': 'conductor desactivado', 'activo': False})
 
+class ConductorActivoViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    A viewset that only returns active conductors.
+    """
+    queryset = Conductor.objects.filter(activo=True)
+    serializer_class = ConductorSerializer
+
 class UbicacionViewSet(viewsets.ModelViewSet):
     queryset = Ubicacion.objects.all()
     serializer_class = UbicacionSerializer

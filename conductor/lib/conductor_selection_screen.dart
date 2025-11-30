@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'package:conductor/api_service.dart';
 import 'package:conductor/order_screen.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,14 +17,49 @@ class ConductorSelectionScreen extends StatefulWidget {
 
 class _ConductorSelectionScreenState extends State<ConductorSelectionScreen> {
   final ApiService apiService = ApiService();
-  late Future<List<dynamic>> conductores;
+  late Stream<List<dynamic>> _conductoresStream;
+  late StreamController<List<dynamic>> _streamController;
 
   @override
   void initState() {
     super.initState();
     _checkSavedConductor();
     _requestLocationPermission();
-    conductores = apiService.getConductores();
+    _streamController = StreamController<List<dynamic>>.broadcast();
+    _conductoresStream = _streamController.stream;
+    _startFetchingConductores();
+  }
+
+  @override
+  void dispose() {
+    _streamController.close();
+    super.dispose();
+  }
+
+  void _startFetchingConductores() {
+    // Fetch immediately
+    _fetchConductores();
+    // Then fetch periodically
+    Timer.periodic(const Duration(seconds: 15), (timer) {
+      if (mounted) {
+        _fetchConductores();
+      } else {
+        timer.cancel();
+      }
+    });
+  }
+
+  Future<void> _fetchConductores() async {
+    try {
+      final conductores = await apiService.getConductores();
+      if (!_streamController.isClosed) {
+        _streamController.add(conductores);
+      }
+    } catch (e) {
+      if (!_streamController.isClosed) {
+        _streamController.addError(e);
+      }
+    }
   }
 
   Future<void> _checkSavedConductor() async {
@@ -48,7 +85,10 @@ class _ConductorSelectionScreenState extends State<ConductorSelectionScreen> {
   Future<void> _selectConductor(int id, String nombre) async {
     try {
       // Obtener token FCM
-      String? fcmToken = await FirebaseMessaging.instance.getToken();
+      String? fcmToken;
+      if (kReleaseMode) {
+        fcmToken = await FirebaseMessaging.instance.getToken();
+      }
       
       // Activar conductor y enviar token
       await apiService.activarConductor(id, fcmToken: fcmToken);
@@ -87,10 +127,10 @@ class _ConductorSelectionScreenState extends State<ConductorSelectionScreen> {
       appBar: AppBar(
         title: const Text('Seleccionar Perfil de Conductor'),
       ),
-      body: FutureBuilder<List<dynamic>>(
-        future: conductores,
+      body: StreamBuilder<List<dynamic>>(
+        stream: _conductoresStream,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (snapshot.connectionState == ConnectionState.waiting && !snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));

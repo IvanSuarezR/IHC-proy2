@@ -18,6 +18,15 @@ class ApiService {
     }
   }
 
+  Future<List<dynamic>> getConductoresActivos() async {
+    final response = await http.get(Uri.parse('$baseUrl/conductores/activos/'));
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to load active conductores');
+    }
+  }
+
   Future<List<dynamic>> getPedidos() async {
     final response = await http.get(Uri.parse('$baseUrl/pedidos/'));
     if (response.statusCode == 200) {
