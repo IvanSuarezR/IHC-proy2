@@ -34,3 +34,5 @@ ngrok.exe
 
 # Archivos varios
 /ProyIHC-MiniApp/Subscribe.txt
+
+firebase_credentials.json

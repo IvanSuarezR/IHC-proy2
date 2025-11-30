@@ -22,12 +22,24 @@ function ConfirmacionView({ cartItems, navigate, direccion }) {
       setPedidoEnviado(true);
 
       try {
-        const telegramId =
-          window.Telegram?.WebApp?.initDataUnsafe?.user?.id || "123456789";
+        const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+        const telegramId = tgUser?.id || "123456789";
+        
+        // Recuperar telefono si se guardó en PagoView
+        const phoneNumber = sessionStorage.getItem('user_phone_number');
+        
+        // Recuperar coordenadas de sessionStorage
+        const lat = sessionStorage.getItem('pedido_lat');
+        const lng = sessionStorage.getItem('pedido_lng');
+        const coordenadas = lat && lng ? `${lat},${lng}` : null;
 
         const pedido = {
           telegram_id: telegramId,
+          first_name: tgUser?.first_name || "Cliente",
+          username: tgUser?.username || "",
+          phone_number: phoneNumber || "",
           direccion: direccion,
+          coordenadas: coordenadas,
           total: total.toFixed(2),
           productos: cartItems.map((item) => ({
             producto_id: item.id,

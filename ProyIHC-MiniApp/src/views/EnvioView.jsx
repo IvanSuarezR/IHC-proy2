@@ -6,6 +6,7 @@ import {
   Marker,
 } from "@react-google-maps/api";
 import "./EnvioView.css";
+import Modal from "../Components/Modal/Modal";
 
 const MapComponent = ({ onLocationSelect, onClose }) => {
   const [markerPosition, setMarkerPosition] = useState(null);
@@ -45,9 +46,33 @@ const MapComponent = ({ onLocationSelect, onClose }) => {
     });
   };
 
-  const handleConfirmLocation = () => {
+  const handleConfirmLocation = async () => {
     if (markerPosition) {
-      onLocationSelect(`${markerPosition.lat}, ${markerPosition.lng}`);
+      // onLocationSelect(`${markerPosition.lat}, ${markerPosition.lng}`);
+      try {
+        // Usa una API de Geocoding aquí. Por ahora simularemos o usaremos OpenStreetMap (Nominatim) que es gratis
+        // Ojo: En producción usa Google Maps Geocoding API con tu key
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${markerPosition.lat}&lon=${markerPosition.lng}`
+        );
+        const data = await response.json();
+        const address = data.display_name || `${markerPosition.lat}, ${markerPosition.lng}`;
+        
+        // Enviamos un objeto con coords y dirección
+        onLocationSelect({
+            address: address,
+            lat: markerPosition.lat,
+            lng: markerPosition.lng
+        });
+      } catch (error) {
+        console.error("Error obteniendo dirección:", error);
+        // Fallback a coordenadas
+        onLocationSelect({
+            address: `${markerPosition.lat}, ${markerPosition.lng}`,
+            lat: markerPosition.lat,
+            lng: markerPosition.lng
+        });
+      }
     } else {
       alert("Por favor, selecciona una ubicación en el mapa.");
     }
@@ -85,6 +110,7 @@ const MapComponent = ({ onLocationSelect, onClose }) => {
 
 function EnvioView({ cartItems, navigate, direccion, setDireccion }) {
   const [showMap, setShowMap] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const subtotal = cartItems.reduce(
     (acc, item) => acc + item.price * item.quantity,
@@ -94,67 +120,83 @@ function EnvioView({ cartItems, navigate, direccion, setDireccion }) {
   const discount = subtotal * 0.002;
   const total = subtotal + delivery - discount;
 
-  const handleLocationSelect = (coords) => {
-    setDireccion(coords);
+  const handleLocationSelect = (locationData) => {
+    setDireccion(locationData.address);
+    // Guardamos lat/lng en sessionStorage para que ConfirmacionView lo pueda recuperar
+    sessionStorage.setItem('pedido_lat', locationData.lat);
+    sessionStorage.setItem('pedido_lng', locationData.lng);
+    
     setShowMap(false);
   };
 
   return (
-    <div className="envio-container">
-      {showMap && (
-        <MapComponent
-          onLocationSelect={handleLocationSelect}
-          onClose={() => setShowMap(false)}
-        />
-      )}
-      <h2>Detalles del Envío</h2>
+    <>
+      <div className="envio-container">
+        {showMap && (
+          <MapComponent
+            onLocationSelect={handleLocationSelect}
+            onClose={() => setShowMap(false)}
+          />
+        )}
+        <h2>Detalles del Envío</h2>
 
-      {/* Lista de productos */}
-      <div className="envio-list">
-        {cartItems.map((item) => (
-          <div className="envio-item" key={item.id}>
-            <span>
-              {item.title} ({item.quantity})
-            </span>
-            <span>${(item.price * item.quantity).toFixed(2)}</span>
-          </div>
-        ))}
+        {/* Lista de productos */}
+        <div className="envio-list">
+          {cartItems.map((item) => (
+            <div className="envio-item" key={item.id}>
+              <span>
+                {item.title} ({item.quantity})
+              </span>
+              <span>${(item.price * item.quantity).toFixed(2)}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Resumen */}
+        <div className="envio-summary">
+          <p>Delivery: ${delivery}</p>
+          <p>Descuento: -${discount.toFixed(2)}</p>
+          <h3>Total: ${total.toFixed(2)}</h3>
+        </div>
+
+        {/* Dirección */}
+        <div className="envio-direccion">
+          <p>📍 Dirección de envío:</p>
+          
+          <button className="btn-ubicacion" onClick={() => setShowMap(true)}>
+            🌍 Seleccionar mi ubicación en el mapa
+          </button>
+
+          <input
+            type="text"
+            placeholder="Tu ubicación seleccionada aparecerá aquí"
+            value={direccion}
+            readOnly
+          />
+        </div>
+
+        {/* Botones inferiores */}
+        <div className="envio-buttons">
+          <button className="btn-volver" onClick={() => navigate("carrito")}>
+            🔙 Volver
+          </button>
+
+          <button
+              className="btn-pago"
+              onClick={() => {
+                  if (!direccion || direccion.trim() === "") {
+                      setErrorMessage("Por favor selecciona una ubicación en el mapa antes de continuar.");
+                      return;
+                  }
+                  navigate("pago");
+              }}
+          >
+            💳 Finalizar pedido
+          </button>
+        </div>
       </div>
-
-      {/* Resumen */}
-      <div className="envio-summary">
-        <p>Delivery: ${delivery}</p>
-        <p>Descuento: -${discount.toFixed(2)}</p>
-        <h3>Total: ${total.toFixed(2)}</h3>
-      </div>
-
-      {/* Dirección */}
-      <div className="envio-direccion">
-        <p>📍 Dirección de envío:</p>
-        
-        <button className="btn-ubicacion" onClick={() => setShowMap(true)}>
-          🌍 Seleccionar mi ubicación en el mapa
-        </button>
-
-        <input
-          type="text"
-          placeholder="Tu ubicación seleccionada aparecerá aquí"
-          value={direccion}
-          readOnly
-        />
-      </div>
-
-      {/* Botones inferiores */}
-      <div className="envio-buttons">
-        <button className="btn-volver" onClick={() => navigate("carrito")}>
-          🔙 Volver
-        </button>
-
-        <button className="btn-pago" onClick={() => navigate("pago")}>
-          💳 Finalizar pedido
-        </button>
-      </div>
-    </div>
+      <Modal message={errorMessage} onClose={() => setErrorMessage(null)} />
+    </>
   );
 }
 

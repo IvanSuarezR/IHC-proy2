@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "141427225840",
+    "project_id": "ihcproy2",
+    "storage_bucket": "ihcproy2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:141427225840:android:6890a004311df544597e35",
+        "android_client_info": {
+          "package_name": "com.example.conductor"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyYY_C3E_1pgdHmQ2Jm3vyvIIuThC1kRY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

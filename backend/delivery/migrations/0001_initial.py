@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('nombre', models.CharField(max_length=100)),
-                ('activo', models.BooleanField(default=True)),
+                ('activo', models.BooleanField(default=False)),
             ],
         ),
         migrations.CreateModel(
@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
                 ('descripcion', models.TextField()),
                 ('estado', models.CharField(choices=[('pendiente', 'Pendiente'), ('aceptado', 'Aceptado'), ('rechazado', 'Rechazado'), ('entregado', 'Entregado')], default='pendiente', max_length=10)),
                 ('fecha_creacion', models.DateTimeField(auto_now_add=True)),
-                ('conductor', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='api.conductor')),
+                ('conductor', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='delivery.conductor')),
             ],
         ),
         migrations.CreateModel(
@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
                 ('latitud', models.FloatField()),
                 ('longitud', models.FloatField()),
                 ('fecha_actualizacion', models.DateTimeField(auto_now=True)),
-                ('conductor', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='api.conductor')),
+                ('conductor', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='delivery.conductor')),
             ],
         ),
     ]

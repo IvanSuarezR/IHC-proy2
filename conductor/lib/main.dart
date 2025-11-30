@@ -1,10 +1,55 @@
-import 'package:conductor/api_service.dart';
-import 'package:conductor/order_screen.dart';
+import 'package:conductor/conductor_selection_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:background_fetch/background_fetch.dart';
+import 'location_service.dart';
 
-void main() {
+// Must be a top-level function (not inside a class)
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // If you're going to use other Firebase services in the background, like Firestore,
+  // make sure you call `initializeApp` before using them.
+  await Firebase.initializeApp();
+
+  print("Handling a background message: ${message.messageId}");
+}
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
+  // Set the background messaging handler
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  // Create a high-importance notification channel for Android
+  const AndroidNotificationChannel channel = AndroidNotificationChannel(
+    'high_importance_channel', // id
+    'High Importance Notifications', // title
+    description: 'This channel is used for important notifications.', // description
+    importance: Importance.max,
+  );
+
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(channel);
+
+
+  // Let FCM know to use our high-priority channel for foreground notifications
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    alert: true, // Required to display a heads-up notification
+    badge: true,
+    sound: true,
+  );
+
   runApp(const MyApp());
+
+  // Register the headless task
+  BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
 }
 
 class MyApp extends StatelessWidget {
@@ -17,70 +62,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const ProfileSelectionScreen(),
-    );
-  }
-}
-
-class ProfileSelectionScreen extends StatefulWidget {
-  const ProfileSelectionScreen({super.key});
-
-  @override
-  State<ProfileSelectionScreen> createState() => _ProfileSelectionScreenState();
-}
-
-class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
-  final ApiService apiService = ApiService();
-  late Future<List<dynamic>> conductores;
-
-  @override
-  void initState() {
-    super.initState();
-    _requestLocationPermission();
-    conductores = apiService.getConductores();
-  }
-
-  Future<void> _requestLocationPermission() async {
-    await Permission.location.request();
-  }
-
-  void _navigateToOrderScreen(BuildContext context, String conductor) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => OrderScreen(conductor: conductor),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Seleccionar Perfil'),
-      ),
-      body: FutureBuilder<List<dynamic>>(
-        future: conductores,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No hay conductores disponibles'));
-          } else {
-            return ListView.builder(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                return ElevatedButton(
-                  onPressed: () => _navigateToOrderScreen(context, snapshot.data![index]['nombre']),
-                  child: Text(snapshot.data![index]['nombre']),
-                );
-              },
-            );
-          }
-        },
-      ),
+      home: const ConductorSelectionScreen(),
     );
   }
 }

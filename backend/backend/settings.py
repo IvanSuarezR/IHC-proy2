@@ -42,8 +42,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_yasg',
     'corsheaders',
-    'api',
+    'delivery',
     'pedidos',
+    'restaurante',
 ]
 
 MIDDLEWARE = [
@@ -116,7 +117,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/La_Paz'
 
 USE_I18N = True
 

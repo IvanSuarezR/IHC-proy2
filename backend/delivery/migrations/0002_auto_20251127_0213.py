@@ -3,14 +3,14 @@
 from django.db import migrations
 
 def create_conductores(apps, schema_editor):
-    Conductor = apps.get_model('api', 'Conductor')
+    Conductor = apps.get_model('delivery', 'Conductor')
     for i in range(1, 6):
         Conductor.objects.create(nombre=f'Conductor {i}')
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0001_initial'),
+        ('delivery', '0001_initial'),
     ]
 
     operations = [

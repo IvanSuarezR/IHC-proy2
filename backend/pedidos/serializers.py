@@ -11,7 +11,8 @@ class PedidoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Pedido
-        fields = ['id', 'telegram_id', 'direccion', 'total', 'productos', 'created_at']
+        fields = ['id', 'telegram_id', 'first_name', 'username', 'phone_number', 'direccion', 'coordenadas', 'total', 'estado', 'productos', 'created_at', 'conductor']
+        read_only_fields = ['created_at']
 
     def create(self, validated_data):
         productos_data = validated_data.pop('productos')
