@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:background_fetch/background_fetch.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -52,9 +53,12 @@ class LocationService {
   factory LocationService() => _instance;
   LocationService._internal();
 
-  final ApiService _apiService = ApiService();
+  Timer? _foregroundTimer;
 
   Future<void> init() async {
+    // Inicia el timer para actualizaciones en primer plano
+    _startForegroundUpdates();
+
     // Configure BackgroundFetch.
     try {
       int status = await BackgroundFetch.configure(
@@ -80,7 +84,22 @@ class LocationService {
   }
 
   Future<void> stop() async {
+    _foregroundTimer?.cancel();
     BackgroundFetch.stop();
-    print('[BackgroundFetch] stopped');
+    print('[LocationService] Foreground and background updates stopped.');
+  }
+
+  void _startForegroundUpdates() {
+    // Cancelar cualquier timer anterior para evitar duplicados
+    _foregroundTimer?.cancel();
+    
+    // Ejecutamos una vez inmediatamente
+    _updateLocation('');
+
+    // Y luego cada 30 segundos
+    _foregroundTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      print('[LocationService] Foreground timer tick.');
+      _updateLocation(''); // Pasamos un taskId vacío para el foreground
+    });
   }
 }

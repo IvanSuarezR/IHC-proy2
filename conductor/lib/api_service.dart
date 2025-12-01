@@ -19,6 +19,7 @@ class ApiService {
   }
 
   Future<List<dynamic>> getConductoresActivos() async {
+    // La URL correcta generada por la @action "activos" en el ConductorViewSet
     final response = await http.get(Uri.parse('$baseUrl/conductores/activos/'));
     if (response.statusCode == 200) {
       return json.decode(response.body);

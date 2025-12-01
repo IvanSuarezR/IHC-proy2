@@ -13,6 +13,7 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   final ApiService _apiService = ApiService();
   Timer? _timer;
+  BitmapDescriptor _driverIcon = BitmapDescriptor.defaultMarker;
 
   GoogleMapController? _mapController;
 
@@ -26,9 +27,29 @@ class _MapScreenState extends State<MapScreen> {
   @override
   void initState() {
     super.initState();
+    // 1. Inicializa el estado con los marcadores que conoces de inmediato.
+    _markers.add(Marker(
+      markerId: const MarkerId('restaurante'),
+      position: const LatLng(-17.783306, -63.182139),
+      infoWindow: const InfoWindow(title: 'Restaurante'),
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+    ));
+    // 2. Carga los assets asíncronos.
+    _loadDriverIcon();
+    // 3. Inicia la carga de datos de la red.
     _startFetchingDriverLocations();
-    // Añadimos el marcador del restaurante desde el inicio.
-    _addRestaurantMarker();
+  }
+
+  Future<void> _loadDriverIcon() async {
+    final icon = await BitmapDescriptor.fromAssetImage(
+      const ImageConfiguration(size: Size(48, 48)),
+      'assets/motorcycle_icon.png', // Asegúrate de tener este asset
+    );
+    if (mounted) {
+      setState(() {
+        _driverIcon = icon;
+      });
+    }
   }
 
   @override
@@ -37,23 +58,13 @@ class _MapScreenState extends State<MapScreen> {
     super.dispose();
   }
 
-  void _addRestaurantMarker() {
-     _markers.add(
-      Marker(
-        markerId: MarkerId('restaurante'),
-        position: LatLng(-17.783306, -63.182139), // Coordenadas fijas del restaurante
-        infoWindow: InfoWindow(title: 'Restaurante'),
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
-      ),
-    );
-  }
 
   void _startFetchingDriverLocations() {
     // Ejecutamos la primera vez inmediatamente
     _updateDriverMarkers();
     
-    // Y luego configuramos el timer para que se repita cada 30 segundos
-    _timer = Timer.periodic(const Duration(seconds: 30), (timer) {
+    // Y luego configuramos el timer para que se repita cada 10 segundos
+    _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
       _updateDriverMarkers();
     });
   }
@@ -61,44 +72,55 @@ class _MapScreenState extends State<MapScreen> {
   Future<void> _updateDriverMarkers() async {
     try {
       final List<dynamic> conductores = await _apiService.getConductoresActivos();
-      final Set<Marker> updatedMarkers = {};
+      print("[map-screen] Conductores recibidos: $conductores"); // DEBUG: Imprimir datos recibidos
 
-      // Siempre mantenemos el marcador del restaurante
-      final restaurantMarker = _markers.firstWhere((m) => m.markerId.value == 'restaurante', orElse: () => _createRestaurantMarker());
-      updatedMarkers.add(restaurantMarker);
+      final Set<Marker> newMarkers = {};
 
+      // 1. Añadir el marcador del restaurante
+      newMarkers.add(Marker(
+        markerId: const MarkerId('restaurante'),
+        position: const LatLng(-17.783306, -63.182139),
+        infoWindow: const InfoWindow(title: 'Restaurante'),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+      ));
+
+      // 2. Añadir los marcadores de los conductores
       for (var conductor in conductores) {
         final ubicacion = conductor['ubicacion'];
         if (ubicacion != null && ubicacion['coordenadas'] != null) {
           try {
             final parts = ubicacion['coordenadas'].split(',');
             if (parts.length == 2) {
-              final lat = double.parse(parts[0]);
-              final lng = double.parse(parts[1]);
-              updatedMarkers.add(
-                Marker(
-                  markerId: MarkerId('conductor_${conductor['id']}'),
-                  position: LatLng(lat, lng),
-                  infoWindow: InfoWindow(title: conductor['nombre']),
-                  icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
-                ),
-              );
+              final lat = double.tryParse(parts[0].trim());
+              final lng = double.tryParse(parts[1].trim());
+              if (lat != null && lng != null) {
+                newMarkers.add(
+                  Marker(
+                    markerId: MarkerId('conductor_${conductor['id']}'),
+                    position: LatLng(lat, lng),
+                    infoWindow: InfoWindow(title: conductor['nombre']),
+                    icon: _driverIcon,
+                  ),
+                );
+              }
             }
           } catch (e) {
-            print("Error al parsear coordenadas para ${conductor['nombre']}: ${ubicacion['coordenadas']}");
+            print("[map-screen] Error al parsear coordenadas para ${conductor['nombre']}: ${ubicacion['coordenadas']}");
           }
         }
       }
 
+      // 3. Actualizar el estado con el nuevo conjunto de marcadores
       if (mounted) {
         setState(() {
           _markers.clear();
-          _markers.addAll(updatedMarkers);
+          _markers.addAll(newMarkers);
         });
+        print("[map-screen] Marcadores actualizados: ${_markers.length}"); // DEBUG: Contar marcadores
       }
 
     } catch (e) {
-      print("Error al obtener la ubicación de los conductores: $e");
+      print("[map-screen]Error al obtener la ubicación de los conductores: $e");
     }
   }
    

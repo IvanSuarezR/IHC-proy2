@@ -40,7 +40,7 @@ class _ConductorSelectionScreenState extends State<ConductorSelectionScreen> {
     // Fetch immediately
     _fetchConductores();
     // Then fetch periodically
-    Timer.periodic(const Duration(seconds: 15), (timer) {
+    Timer.periodic(const Duration(seconds: 10), (timer) {
       if (mounted) {
         _fetchConductores();
       } else {
@@ -87,7 +87,18 @@ class _ConductorSelectionScreenState extends State<ConductorSelectionScreen> {
       // Obtener token FCM
       String? fcmToken;
       if (kReleaseMode) {
-        fcmToken = await FirebaseMessaging.instance.getToken();
+        try {
+          fcmToken = await FirebaseMessaging.instance.getToken();
+        } catch (e) {
+          print("Error al obtener token FCM la primera vez: $e. Reintentando en 3 segundos...");
+          await Future.delayed(const Duration(seconds: 3));
+          try {
+            fcmToken = await FirebaseMessaging.instance.getToken();
+          } catch (e2) {
+            print("Error al obtener token FCM en el segundo intento: $e2");
+            // Opcional: mostrar un error al usuario si el segundo intento también falla.
+          }
+        }
       }
       
       // Activar conductor y enviar token

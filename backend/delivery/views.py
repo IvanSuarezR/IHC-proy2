@@ -27,6 +27,15 @@ class ConductorViewSet(viewsets.ModelViewSet):
         conductor.save()
         return Response({'status': 'conductor desactivado', 'activo': False})
 
+    @action(detail=False, methods=['get'])
+    def activos(self, request):
+        """
+        Devuelve una lista de todos los conductores activos.
+        """
+        conductores = self.get_queryset().filter(activo=True)
+        serializer = self.get_serializer(conductores, many=True)
+        return Response(serializer.data)
+
     @action(detail=True, methods=['post'])
     def actualizar_ubicacion(self, request, pk=None):
         conductor = self.get_object()
@@ -45,13 +54,6 @@ class ConductorViewSet(viewsets.ModelViewSet):
         
         status_code = status.HTTP_201_CREATED if created else status.HTTP_200_OK
         return Response(UbicacionSerializer(ubicacion).data, status=status_code)
-
-class ConductorActivoViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    A viewset that only returns active conductors.
-    """
-    queryset = Conductor.objects.filter(activo=True)
-    serializer_class = ConductorSerializer
 
 class UbicacionViewSet(viewsets.ReadOnlyModelViewSet):
     """
