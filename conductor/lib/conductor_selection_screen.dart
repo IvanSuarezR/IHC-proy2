@@ -87,17 +87,30 @@ class _ConductorSelectionScreenState extends State<ConductorSelectionScreen> {
       // Obtener token FCM
       String? fcmToken;
       if (kReleaseMode) {
-        try {
-          fcmToken = await FirebaseMessaging.instance.getToken();
-        } catch (e) {
-          print("Error al obtener token FCM la primera vez: $e. Reintentando en 3 segundos...");
-          await Future.delayed(const Duration(seconds: 3));
+        // 1. Solicitar permisos de notificación (clave para la inicialización)
+        FirebaseMessaging messaging = FirebaseMessaging.instance;
+        NotificationSettings settings = await messaging.requestPermission(
+          alert: true,
+          announcement: false,
+          badge: true,
+          carPlay: false,
+          criticalAlert: false,
+          provisional: false,
+          sound: true,
+        );
+
+        print('Permisos de notificación concedidos: ${settings.authorizationStatus}');
+
+        // 2. Si los permisos están concedidos, obtener el token
+        if (settings.authorizationStatus == AuthorizationStatus.authorized) {
           try {
             fcmToken = await FirebaseMessaging.instance.getToken();
-          } catch (e2) {
-            print("Error al obtener token FCM en el segundo intento: $e2");
-            // Opcional: mostrar un error al usuario si el segundo intento también falla.
+            print('Token FCM obtenido: $fcmToken');
+          } catch (e) {
+            print('Error al obtener el token FCM: $e');
           }
+        } else {
+          print('El usuario denegó los permisos de notificación');
         }
       }
       
