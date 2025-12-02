@@ -2,69 +2,108 @@
    CONTENEDOR GENERAL
 ============================= */
 .envio-container {
-  color: #000;
-  background-color: #fffaf5;
   min-height: 100vh;
-  padding: 20px;
-  overflow-x: hidden;
-
-  font-size: 1.1rem; /* Aumenta tamaño de texto general */
+  background-color: #FFF9F0;
+  padding: 0 0px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: system-ui, sans-serif;
 }
 
 /* =============================
-   LISTA, RESUMEN Y DIRECCIÓN
+   HEADER ESTILO MENU PRINCIPAL (FULL WIDTH)
 ============================= */
-.envio-list,
-.envio-summary,
-.envio-direccion {
-  margin-bottom: 20px;
-  padding: 15px;
-  border: 2px solid #e0c521; /* borde dorado */
-  border-radius: 10px;
-  background-color: #fff3e0; /* suave crema */
-}
-
-/* =============================
-   ITEM DE PRODUCTO
-============================= */
-.envio-item {
-  color: #000;
+.envio-header-new {
+  width: 100%; /* ocupa todo el ancho disponible */
+  background-color: #c01d2e;
+  padding: 12px;
   display: flex;
   justify-content: space-between;
-  margin-bottom: 8px;
-  font-size: 1.1rem; /* Más grande */
-  font-weight: 500;
+  align-items: center;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.envio-header-title-new {
+  color: white;
+  font-size: 1.6rem;
+  font-weight: bold;
+  text-align: center;
+  flex: 1;
+}
+
+.envio-header-back-new {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* Logo */
+.menu-logo-new {
+  width: 65px;
+  height: 65px;
+  border-radius: 100px;
+  object-fit: cover;
+  margin-right: 10px;
+  border: 3px solid #FFC107;
 }
 
 /* =============================
-   RESUMEN DE COSTOS
+   TARJETAS Y LISTAS
 ============================= */
-.envio-summary p,
-.envio-summary h3 {
-  margin: 5px 0;
-  font-size: 1.1rem;
+.envio-content-new {
+  width: 100%;
+  max-width: 500px;
+  margin-top: 15px;
+  padding: 0 10px;
 }
 
-.envio-summary h3 {
-  font-size: 1.3rem;
+.envio-card-new {
+  background: white;
+  border-radius: 12px;
+  padding: 10px; /* ajustado a 10px */
+  margin-bottom: 14px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.envio-section-title-new {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.envio-item-new,
+.envio-row-new {
+  display: flex;
+  justify-content: space-between;
+  margin: 6px 0;
+  font-size: 1em;
   color: #333;
+}
+
+.envio-total-row-new {
+  display: flex;
+  justify-content: space-between;
   font-weight: bold;
+  font-size: 1.1em;
+  margin-top: 10px;
+}
+
+.envio-total-amount-new {
+  color: #000;
 }
 
 /* =============================
-   DIRECCIÓN DE ENVÍO
+   INPUTS
 ============================= */
-.envio-direccion p {
-  font-weight: bold;
-  font-size: 1.15rem;
-}
-
-.envio-direccion input {
+.envio-input-new {
   width: 100%;
   padding: 10px;
   margin-top: 8px;
   border-radius: 8px;
-  border: 2px solid #e0c521; /* borde dorado */
+  border: 2px solid #e0c521;
   font-size: 1rem;
   outline: none;
 }
@@ -72,63 +111,42 @@
 /* =============================
    BOTONES
 ============================= */
-.envio-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-}
-
-.btn-volver,
-.btn-pago {
+.envio-btn-mapa-new,
+.btn-back-new,
+.btn-pago-new {
   border: none;
   border-radius: 8px;
   padding: 12px 18px;
   font-weight: bold;
   cursor: pointer;
-  font-size: 1.1rem; /* texto más grande */
+  font-size: 1.1rem;
 }
 
-/* Botón volver */
-.btn-volver {
-  background-color: #f0c040; /* dorado suave */
-  color: #000;
-  border: 2px solid #e0c521; /* borde dorado */
-}
-
-/* Botón pagar */
-.btn-pago {
+.envio-btn-mapa-new {
   background-color: #4caf50;
   color: white;
-  border: 2px solid #2e7d32;
+  width: 100%;
+  margin-bottom: 10px;
 }
 
-/* Hover */
-.btn-volver:hover {
-  background-color: #e6b835;
+.btn-back-new {
+  background-color: #ddd;
+  color: #333;
+  flex: 1;
+  margin-right: 5px;
 }
 
-.btn-pago:hover {
-  background-color: #449d48;
+.btn-pago-new {
+  background-color: #D32F2F;
+  color: white;
+  flex: 1;
+  margin-left: 5px;
 }
 
-/* =============================
-   RESPONSIVE
-============================= */
-@media (min-width: 768px) {
-  .envio-container {
-    padding: 40px;
-    font-size: 1.2rem;
-  }
-
-  .envio-item {
-    font-size: 1.2rem;
-  }
-
-  .btn-volver,
-  .btn-pago {
-    padding: 14px 22px;
-    font-size: 1.15rem;
-  }
+.envio-buttons-new {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
 }
 
 /* =============================

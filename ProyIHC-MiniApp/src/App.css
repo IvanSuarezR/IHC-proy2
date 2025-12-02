@@ -1,32 +1,51 @@
-body{
-  /*background-color: rgb(19, 19, 52);*/
+/* Evitar scroll horizontal y ocupar toda la pantalla */
+html, body {
+  margin: 0;
+  padding: 0;       /* CORREGIDO: antes tenías 100% */
+  width: 100%;
+  min-height: 100%; /* aseguramos que ocupe toda la altura */
+  overflow-x: hidden;
+  box-sizing: border-box;
   background-color: #fffaf5;
-  color: #fff;
+  color: #000;      /* o el color que quieras */
 }
 
-.cards__container{
+* {
+  box-sizing: border-box; /* padding y border no rompen el ancho */
+}
+
+/* Cards container */
+.cards__container {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  width: 100%;
+  max-width: 100%;
+  padding: 0 10px;
 }
 
-
-.logo {
-  width: 120px;       /* tamaño de la imagen */
-  height: 120px;
-  object-fit: cover;
-  border-radius: 20%; /* bordes redondeados */
-  margin-bottom: 10px;
-}
-
-.heading{
-  text-align: center;
-  font-size: 2rem;
-  text-align: center;
-}
+/* Cabecera */
 .header {
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-bottom: 20px;
+  width: 100%;
+  max-width: 500px;
+}
+
+/* Logo */
+.logo {
+  width: 100%;
+  max-width: 120px;
+  height: auto;
+  object-fit: cover;
+  border-radius: 20%;
+  margin-bottom: 10px;
+}
+
+/* Heading */
+.heading {
+  text-align: center;
+  font-size: 2rem;
 }

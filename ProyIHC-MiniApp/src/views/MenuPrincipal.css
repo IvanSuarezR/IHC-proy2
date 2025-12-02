@@ -1,31 +1,73 @@
-.menu-header {
-  color: #000;
-  display: flex;
-  flex-direction: column; /* Logo arriba del título */
-  align-items: center;    /* Centrado horizontal */
-  justify-content: center;
-  margin-bottom: 20px;
-  padding: 10px;
-}
-
-.menu-header .logo {
-  width: 120px;      /* +20% del tamaño original (100px → 120px) */
-  max-width: 25vw;   /* Se adapta al tamaño de la pantalla */
-  height: auto;
-  margin-bottom: 10px;
-}
-
-.menu-header h1 {
-  font-size: 1.8rem;
-  text-align: center;
+.menu-container-new {
+  min-height: 100vh;
+  width: 100%;
+  background-color: #FFF9F0;
+  padding: 0;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* Botón del carrito */
-.btn-carrito {
-  display: block;
-  margin: 0 auto 20px auto;
-  padding: 10px 20px;
-  font-size: 1rem;
+/* BARRA SUPERIOR (como tu ejemplo react native) */
+.menu-header-new {
+  width: 100%;
+  background-color: #c01d2e; /* rojo */
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
+
+  /* NO fixed, NO sticky */
+  position: relative;
+}
+
+.menu-header-title {
+  color: white;
+  font-size: 1.6rem;
+  font-weight: bold;
+}
+
+.menu-header-cart {
+  position: relative;
+  background: transparent;
+  border: none;
   cursor: pointer;
+  font-size: 1.6rem;
+}
+.menu-logo-new {
+  width: 65px;
+  height: 65px;
+  border-radius: 100px;
+  object-fit: cover;
+  margin-bottom: 6px;
+  border: 3px solid #FFC107;
+}
+.menu-cart-badge-new {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  background-color: #FFC107;
+  color: black;
+  font-weight: bold;
+  font-size: 0.7rem;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* CARDS */
+.cards-container-new {
+  padding: 16px;
+  width: 100%;
+  max-width: 500px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+
+  box-sizing: border-box;
 }

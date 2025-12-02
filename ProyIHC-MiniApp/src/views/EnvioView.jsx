@@ -1,17 +1,12 @@
-// src/views/EnvioView.jsx
 import React, { useState, useEffect } from "react";
-import {
-  GoogleMap,
-  useJsApiLoader,
-  Marker,
-} from "@react-google-maps/api";
+import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
 import "./EnvioView.css";
 import Modal from "../Components/Modal/Modal";
+import kingLogo from "../images/kingLogo.jpg";
 
 const MapComponent = ({ onLocationSelect, onClose }) => {
   const [markerPosition, setMarkerPosition] = useState(null);
-  const [center, setCenter] = useState({ lat: -17.783294, lng: -63.182128});
-
+  const [center, setCenter] = useState({ lat: -17.783294, lng: -63.182128 });
 
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
@@ -27,9 +22,7 @@ const MapComponent = ({ onLocationSelect, onClose }) => {
             lng: position.coords.longitude,
           });
         },
-        () => {
-          // No se pudo obtener la ubicación, se mantiene el centro por defecto
-        }
+        () => {}
       );
     }
   }, []);
@@ -47,59 +40,58 @@ const MapComponent = ({ onLocationSelect, onClose }) => {
   };
 
   const handleConfirmLocation = async () => {
-    if (markerPosition) {
-      // onLocationSelect(`${markerPosition.lat}, ${markerPosition.lng}`);
-      try {
-        // Usa una API de Geocoding aquí. Por ahora simularemos o usaremos OpenStreetMap (Nominatim) que es gratis
-        // Ojo: En producción usa Google Maps Geocoding API con tu key
-        const response = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${markerPosition.lat}&lon=${markerPosition.lng}`
-        );
-        const data = await response.json();
-        const address = data.display_name || `${markerPosition.lat}, ${markerPosition.lng}`;
-        
-        // Enviamos un objeto con coords y dirección
-        onLocationSelect({
-            address: address,
-            lat: markerPosition.lat,
-            lng: markerPosition.lng
-        });
-      } catch (error) {
-        console.error("Error obteniendo dirección:", error);
-        // Fallback a coordenadas
-        onLocationSelect({
-            address: `${markerPosition.lat}, ${markerPosition.lng}`,
-            lat: markerPosition.lat,
-            lng: markerPosition.lng
-        });
-      }
-    } else {
+    if (!markerPosition) {
       alert("Por favor, selecciona una ubicación en el mapa.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${markerPosition.lat}&lon=${markerPosition.lng}`
+      );
+      const data = await response.json();
+
+      const address =
+        data.display_name ||
+        `${markerPosition.lat}, ${markerPosition.lng}`;
+
+      onLocationSelect({
+        address,
+        lat: markerPosition.lat,
+        lng: markerPosition.lng,
+      });
+    } catch (error) {
+      console.error("Error obteniendo dirección:", error);
+      onLocationSelect({
+        address: `${markerPosition.lat}, ${markerPosition.lng}`,
+        lat: markerPosition.lat,
+        lng: markerPosition.lng,
+      });
     }
   };
 
-  if (!isLoaded) {
-    return <div>Cargando...</div>;
-  }
+  if (!isLoaded) return <div>Cargando...</div>;
 
   return (
     <div className="map-modal">
       <div className="map-container">
-          <GoogleMap
-            mapContainerStyle={mapContainerStyle}
-            zoom={15}
-            center={center}
-            onClick={onMapClick}
-            options={{ gestureHandling: "greedy" }}
-          >
+        <GoogleMap
+          mapContainerStyle={mapContainerStyle}
+          zoom={15}
+          center={center}
+          onClick={onMapClick}
+          options={{ gestureHandling: "greedy" }}
+        >
           {markerPosition && <Marker position={markerPosition} />}
         </GoogleMap>
+
         <button
           className="btn-confirmar-ubicacion"
           onClick={handleConfirmLocation}
         >
           Seleccionar Ubicación
         </button>
+
         <button className="btn-cerrar-mapa" onClick={onClose}>
           X
         </button>
@@ -116,55 +108,80 @@ function EnvioView({ cartItems, navigate, direccion, setDireccion }) {
     (acc, item) => acc + item.price * item.quantity,
     0
   );
+
   const delivery = 2;
   const discount = subtotal * 0.002;
   const total = subtotal + delivery - discount;
 
   const handleLocationSelect = (locationData) => {
     setDireccion(locationData.address);
-    // Guardamos lat/lng en sessionStorage para que ConfirmacionView lo pueda recuperar
-    sessionStorage.setItem('pedido_lat', locationData.lat);
-    sessionStorage.setItem('pedido_lng', locationData.lng);
-    
+    sessionStorage.setItem("pedido_lat", locationData.lat);
+    sessionStorage.setItem("pedido_lng", locationData.lng);
     setShowMap(false);
   };
 
   return (
-    <>
-      <div className="envio-container">
-        {showMap && (
-          <MapComponent
-            onLocationSelect={handleLocationSelect}
-            onClose={() => setShowMap(false)}
-          />
-        )}
-        <h2>Detalles del Envío</h2>
+    <div className="envio-container">
 
-        {/* Lista de productos */}
-        <div className="envio-list">
+      {/* HEADER */}
+      <div className="envio-header-new">
+        <img src={kingLogo} alt="King Logo" className="menu-logo-new" />
+
+        <div className="envio-header-title-new">Detalles del Envío</div>
+
+        
+      </div>
+
+      {/* MAPA */}
+      {showMap && (
+        <MapComponent
+          onLocationSelect={handleLocationSelect}
+          onClose={() => setShowMap(false)}
+        />
+      )}
+
+      {/* CONTENIDO */}
+      <div className="envio-content-new">
+
+        {/* LISTA DE PRODUCTOS */}
+        <div className="envio-card-new">
+          <h2 className="envio-section-title-new">Tu Pedido</h2>
           {cartItems.map((item) => (
-            <div className="envio-item" key={item.id}>
-              <span>
-                {item.title} ({item.quantity})
-              </span>
+            <div className="envio-item-new" key={item.id}>
+              <span>{item.title} x {item.quantity}</span>
               <span>${(item.price * item.quantity).toFixed(2)}</span>
             </div>
           ))}
         </div>
 
-        {/* Resumen */}
-        <div className="envio-summary">
-          <p>Delivery: ${delivery}</p>
-          <p>Descuento: -${discount.toFixed(2)}</p>
-          <h3>Total: ${total.toFixed(2)}</h3>
+        {/* RESUMEN */}
+        <div className="envio-card-new">
+          <h2 className="envio-section-title-new">Resumen</h2>
+          <div className="envio-row-new">
+            <span>Delivery</span>
+            <span>${delivery}</span>
+          </div>
+          <div className="envio-row-new">
+            <span>Descuento</span>
+            <span>- ${discount.toFixed(2)}</span>
+          </div>
+          <div className="envio-total-row-new">
+            <strong>Total</strong>
+            <strong className="envio-total-amount-new">
+              ${total.toFixed(2)}
+            </strong>
+          </div>
         </div>
 
-        {/* Dirección */}
-        <div className="envio-direccion">
-          <p>📍 Dirección de envío:</p>
-          
-          <button className="btn-ubicacion" onClick={() => setShowMap(true)}>
-            🌍 Seleccionar mi ubicación en el mapa
+        {/* DIRECCIÓN */}
+        <div className="envio-card-new">
+          <h2 className="envio-section-title-new">Dirección de Envío</h2>
+
+          <button
+            className="envio-btn-mapa-new"
+            onClick={() => setShowMap(true)}
+          >
+            🌍 Seleccionar ubicación en el mapa
           </button>
 
           <input
@@ -172,31 +189,41 @@ function EnvioView({ cartItems, navigate, direccion, setDireccion }) {
             placeholder="Tu ubicación seleccionada aparecerá aquí"
             value={direccion}
             readOnly
+            className="envio-input-new"
           />
         </div>
 
-        {/* Botones inferiores */}
-        <div className="envio-buttons">
-          <button className="btn-volver" onClick={() => navigate("carrito")}>
+        {/* BOTONES */}
+        <div className="envio-buttons-new">
+          <button
+            className="btn-back-new"
+            onClick={() => navigate("carrito")}
+          >
             🔙 Volver
           </button>
 
           <button
-              className="btn-pago"
-              onClick={() => {
-                  if (!direccion || direccion.trim() === "") {
-                      setErrorMessage("Por favor selecciona una ubicación en el mapa antes de continuar.");
-                      return;
-                  }
-                  navigate("pago");
-              }}
+            className="btn-pago-new"
+            onClick={() => {
+              if (!direccion || direccion.trim() === "") {
+                setErrorMessage(
+                  "Por favor selecciona una ubicación en el mapa antes de continuar."
+                );
+                return;
+              }
+              navigate("pago");
+            }}
           >
             💳 Finalizar pedido
           </button>
         </div>
       </div>
-      <Modal message={errorMessage} onClose={() => setErrorMessage(null)} />
-    </>
+
+      <Modal
+        message={errorMessage}
+        onClose={() => setErrorMessage(null)}
+      />
+    </div>
   );
 }
 
