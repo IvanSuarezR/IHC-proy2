@@ -1,7 +1,10 @@
 import { useEffect } from "react";
 import "./MenuPrincipal.css";
 import Card from "../Components/Card/Card.jsx";
+import Header from "../Components/Header/Header.jsx";
 import kingLogo from "../images/kingLogo.jpg";
+
+import cartIcon from "../images/cartLogo.png";
 import { getData } from "../db/db.js";
 
 const foods = getData();
@@ -42,22 +45,14 @@ function MenuPrincipal({ cartItems, setCartItems, navigate }) {
     <div className="menu-container-new">
 
       {/* HEADER estilo React Native */}
-      <header className="menu-header-new">
-        <img src={kingLogo} alt="King Logo" className="menu-logo-new" />
-        <h1 className="menu-header-title">KingsFoods_Express</h1>
+      <Header
+        title="Menú Principal"
+        cartItems={cartItems}
+        navigate={navigate}
+        showCart={true}
+        
+      />
 
-        <button
-          className="menu-header-cart"
-          onClick={() => navigate("carrito")}
-        >
-          🛒
-          {cartItems.length > 0 && (
-            <div className="menu-cart-badge-new">
-              {cartItems.reduce((sum, item) => sum + item.quantity, 0)}
-            </div>
-          )}
-        </button>
-      </header>
 
       {/* GRID DE PRODUCTOS */}
       <div className="cards-container-new">

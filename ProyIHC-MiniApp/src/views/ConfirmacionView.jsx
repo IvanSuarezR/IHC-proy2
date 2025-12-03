@@ -24,11 +24,7 @@ function ConfirmacionView({ cartItems, navigate, direccion }) {
       try {
         const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
         const telegramId = tgUser?.id || "123456789";
-        
-        // Recuperar telefono si se guardó en PagoView
         const phoneNumber = sessionStorage.getItem('user_phone_number');
-        
-        // Recuperar coordenadas de sessionStorage
         const lat = sessionStorage.getItem('pedido_lat');
         const lng = sessionStorage.getItem('pedido_lng');
         const coordenadas = lat && lng ? `${lat},${lng}` : null;
@@ -100,16 +96,28 @@ function ConfirmacionView({ cartItems, navigate, direccion }) {
         <img src={kingLogo} alt="King Logo" className="logo" />
       </div>
       <h2 className="confirm-title">Pedido Confirmado</h2>
+
+      {/* ============================= */}
+      {/* DETALLES DEL PEDIDO ESTILO CARD */}
+      {/* ============================= */}
       <div className="confirm-details">
-        <p><strong>Descripción del pedido:</strong></p>
+        <p className="confirm-subtitle">Descripción del pedido:</p>
         {cartItems.map((item) => (
-          <p key={item.id}>
-            • {item.title} x {item.quantity} — ${item.price * item.quantity}
-          </p>
+          <div key={item.id} className="confirm-item-card">
+            <span className="item-title">{item.title} x {item.quantity}</span>
+            <span className="item-price">${(item.price * item.quantity).toFixed(2)}</span>
+          </div>
         ))}
-        <p><strong>Total del pedido:</strong> ${total.toFixed(2)}</p>
-        <p><strong>Estado:</strong> Pagado ✅</p>
+        <div className="confirm-item-card total">
+          <span><strong>Total del pedido:</strong></span>
+          <span><strong>${total.toFixed(2)}</strong></span>
+        </div>
+        <div className="confirm-item-card status">
+          <span><strong>Estado:</strong></span>
+          <span>Pagado ✅</span>
+        </div>
       </div>
+
       <h3 className="confirm-status">🚚 PEDIDO EN CAMINO</h3>
       <p className="confirm-thanks">¡Gracias por su compra! 🙌</p>
       <button className="btn-volver-menu" onClick={() => navigate("menu")}>

@@ -9,23 +9,23 @@
   align-items: center;
 }
 
-/* BARRA SUPERIOR (como tu ejemplo react native) */
 .menu-header-new {
   width: 100%;
   background-color: #c01d2e; /* rojo */
-  padding: 12px;
+  padding: 13px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   box-sizing: border-box;
-
+  border-radius: 0 0 10px 10px;
+  
   /* NO fixed, NO sticky */
   position: relative;
 }
 
 .menu-header-title {
   color: white;
-  font-size: 1.6rem;
+  font-size: 1.8rem;
   font-weight: bold;
 }
 
@@ -36,14 +36,16 @@
   cursor: pointer;
   font-size: 1.6rem;
 }
+
 .menu-logo-new {
-  width: 65px;
-  height: 65px;
+  width: 70px;
+  height: 70px;
   border-radius: 100px;
   object-fit: cover;
   margin-bottom: 6px;
   border: 3px solid #FFC107;
 }
+
 .menu-cart-badge-new {
   position: absolute;
   top: -6px;
@@ -59,6 +61,17 @@
   justify-content: center;
   align-items: center;
 }
+
+.menu-cart-icon {
+  border-radius: 30%; /*redondo*/
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+  /*padding: 2px;*/
+  /*border: 2px solid #FFC107;*/
+  /*filter: brightness(0) invert(1); /* opcional: lo hace blanco */
+}
+
 
 /* CARDS */
 .cards-container-new {

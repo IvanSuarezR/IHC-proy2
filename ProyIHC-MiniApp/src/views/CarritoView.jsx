@@ -1,7 +1,10 @@
 import React from "react";
 import "./CarritoView.css";
 import kingLogo from "../images/kingLogo.jpg";
+/*import cartIcon from "../images/cartLogo.png";*/
+
 import Button from "../Components/Button/Button.jsx";
+import Header from "../Components/Header/Header.jsx";
 
 function CarritoView({ cartItems, setCartItems, navigate }) {
 
@@ -44,25 +47,15 @@ function CarritoView({ cartItems, setCartItems, navigate }) {
 
   return (
     <div className="cart-container-new">
+      <Header
+        title="Tu Pedido"
+        cartItems={cartItems}
+        navigate={navigate}
+        showCart={false}
+        showBack={true}
+        onBack={() => navigate("menu")}
+      />
 
-      {/* HEADER */}
-      <div className="cart-header-new">
-        {/* Logo */}
-        <img src={kingLogo} alt="King Logo" className="menu-logo-new" />
-
-        {/* Título */}
-        <div className="cart-header-title-new">Tu Pedido</div>
-
-        {/* Carrito con badge */}
-        <button className="cart-header-icon-new" onClick={() => navigate("carrito")}>
-          🛒
-          {cartItems.length > 0 && (
-            <div className="menu-cart-badge-new">
-              {cartItems.reduce((sum, item) => sum + item.quantity, 0)}
-            </div>
-          )}
-        </button>
-      </div>
 
       {/* CARRITO VACÍO */}
       {cartItems.length === 0 ? (
