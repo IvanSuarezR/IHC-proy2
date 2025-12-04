@@ -6,6 +6,9 @@ from .serializers import PedidoSerializer
 from delivery.services import asignar_pedido
 from delivery.models import Conductor
 from .bot_notifications import enviar_confirmacion_pedido, enviar_actualizacion_estado
+import logging
+
+logger = logging.getLogger(__name__)
 
 class PedidoViewSet(viewsets.ModelViewSet):
     queryset = Pedido.objects.all()
@@ -93,18 +96,24 @@ class PedidoViewSet(viewsets.ModelViewSet):
         
         # Enviar notificación al usuario si el estado cambió
         if estado:
-            pedido.refresh_from_db()
-            
-            # Mensajes personalizados según el estado
-            mensajes_extra = {
-                'aceptado': '¡Un conductor ha aceptado tu pedido! 🚗',
-                'recibido': '¡Tu pedido está en camino! El conductor lo ha recogido. 🚚',
-                'entregado': '¡Tu pedido ha sido entregado! Esperamos que lo disfrutes. 😊',
-                'cancelado': 'Tu pedido ha sido cancelado. 😔',
-            }
-            
-            mensaje = mensajes_extra.get(estado)
-            enviar_actualizacion_estado(pedido, mensaje)
+            try:
+                pedido.refresh_from_db()
+                
+                # Mensajes personalizados según el estado
+                mensajes_extra = {
+                    'aceptado': '¡Un conductor ha aceptado tu pedido! 🚗',
+                    'recibido': '¡Tu pedido está en camino! El conductor lo ha recogido. 🚚',
+                    'entregado': '¡Tu pedido ha sido entregado! Esperamos que lo disfrutes. 😊',
+                    'cancelado': 'Tu pedido ha sido cancelado. 😔',
+                    'buscando': 'Estamos buscando un conductor para tu pedido. 🔍',
+                    'disponible': 'Tu pedido está disponible para ser asignado. 📢',
+                }
+                
+                mensaje = mensajes_extra.get(estado)
+                logger.info(f"Enviando notificación de cambio de estado: {estado} para pedido {pedido.id}")
+                enviar_actualizacion_estado(pedido, mensaje)
+            except Exception as e:
+                logger.error(f"Error al procesar notificación de actualización: {str(e)}")
         
         return response
     
@@ -119,9 +128,12 @@ class PedidoViewSet(viewsets.ModelViewSet):
             pedido_id = response.data.get('id')
             try:
                 pedido = Pedido.objects.get(id=pedido_id)
+                logger.info(f"Nuevo pedido creado: {pedido_id}, enviando confirmación...")
                 # Enviar confirmación al usuario
                 enviar_confirmacion_pedido(pedido)
             except Pedido.DoesNotExist:
-                pass
+                logger.error(f"No se encontró el pedido {pedido_id} después de crearlo")
+            except Exception as e:
+                logger.error(f"Error al enviar confirmación para pedido {pedido_id}: {str(e)}")
         
         return response

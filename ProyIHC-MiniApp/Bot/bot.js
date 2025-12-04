@@ -45,11 +45,16 @@ bot.start(async (ctx) => {
 // Endpoint para enviar confirmación de pedido
 app.post('/send-order-confirmation', async (req, res) => {
   try {
+    console.log('📥 Recibida petición de confirmación:', JSON.stringify(req.body, null, 2));
+    
     const { telegram_id, pedido_id, productos, total, direccion, estado } = req.body;
 
     if (!telegram_id) {
+      console.error('❌ Error: telegram_id no proporcionado');
       return res.status(400).json({ error: 'telegram_id es requerido' });
     }
+
+    console.log(`📤 Enviando confirmación a telegram_id: ${telegram_id}`);
 
     // Crear el mensaje de confirmación
     let mensaje = `✅ *¡Pedido Confirmado!*\n\n`;
@@ -72,10 +77,11 @@ app.post('/send-order-confirmation', async (req, res) => {
 
     // Enviar mensaje al usuario
     await bot.telegram.sendMessage(telegram_id, mensaje, { parse_mode: 'Markdown' });
-
+    
+    console.log(`✅ Confirmación enviada exitosamente a ${telegram_id}`);
     res.json({ success: true, message: 'Confirmación enviada' });
   } catch (error) {
-    console.error('Error enviando confirmación:', error);
+    console.error('❌ Error enviando confirmación:', error);
     res.status(500).json({ error: 'Error al enviar confirmación', details: error.message });
   }
 });
@@ -83,20 +89,25 @@ app.post('/send-order-confirmation', async (req, res) => {
 // Endpoint para actualizar estado del pedido
 app.post('/send-order-update', async (req, res) => {
   try {
+    console.log('📥 Recibida petición de actualización:', JSON.stringify(req.body, null, 2));
+    
     const { telegram_id, pedido_id, estado, mensaje_extra } = req.body;
 
     if (!telegram_id) {
+      console.error('❌ Error: telegram_id no proporcionado');
       return res.status(400).json({ error: 'telegram_id es requerido' });
     }
 
+    console.log(`📤 Enviando actualización a telegram_id: ${telegram_id}, estado: ${estado}`);
+
     const estadosEmoji = {
-      'pendiente': '⏳',
-      'buscando': '🔍',
-      'aceptado': '✅',
-      'recibido': '🚚',
-      'entregado': '🎉',
-      'cancelado': '❌',
-      'disponible': '📢'
+      'Pendiente': '⏳',
+      'Buscando Conductor': '🔍',
+      'Aceptado': '✅',
+      'Recibido por Conductor': '🚚',
+      'Entregado': '🎉',
+      'Cancelado': '❌',
+      'Disponible para todos': '📢'
     };
 
     const emoji = estadosEmoji[estado] || '📦';
@@ -108,10 +119,11 @@ app.post('/send-order-update', async (req, res) => {
     }
 
     await bot.telegram.sendMessage(telegram_id, mensaje, { parse_mode: 'Markdown' });
-
+    
+    console.log(`✅ Actualización enviada exitosamente a ${telegram_id}`);
     res.json({ success: true, message: 'Actualización enviada' });
   } catch (error) {
-    console.error('Error enviando actualización:', error);
+    console.error('❌ Error enviando actualización:', error);
     res.status(500).json({ error: 'Error al enviar actualización', details: error.message });
   }
 });
