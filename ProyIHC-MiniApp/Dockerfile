@@ -31,15 +31,25 @@ RUN npm install --omit=dev
 COPY Bot ./Bot
 COPY src/images ./src/images
 
-# Configurar Nginx para usar el puerto 8080
+# Configurar Nginx para usar el puerto 8080 y proxy para el bot
 RUN mkdir -p /run/nginx /var/log/nginx && \
     rm -f /etc/nginx/http.d/default.conf && \
     echo 'server {' > /etc/nginx/http.d/default.conf && \
     echo '    listen 8080;' >> /etc/nginx/http.d/default.conf && \
     echo '    server_name _;' >> /etc/nginx/http.d/default.conf && \
-    echo '    root /usr/share/nginx/html;' >> /etc/nginx/http.d/default.conf && \
-    echo '    index index.html;' >> /etc/nginx/http.d/default.conf && \
+    echo '' >> /etc/nginx/http.d/default.conf && \
+    echo '    # Proxy para el bot de Telegram' >> /etc/nginx/http.d/default.conf && \
+    echo '    location /bot/ {' >> /etc/nginx/http.d/default.conf && \
+    echo '        proxy_pass http://localhost:3001/;' >> /etc/nginx/http.d/default.conf && \
+    echo '        proxy_http_version 1.1;' >> /etc/nginx/http.d/default.conf && \
+    echo '        proxy_set_header Host $host;' >> /etc/nginx/http.d/default.conf && \
+    echo '        proxy_set_header X-Real-IP $remote_addr;' >> /etc/nginx/http.d/default.conf && \
+    echo '    }' >> /etc/nginx/http.d/default.conf && \
+    echo '' >> /etc/nginx/http.d/default.conf && \
+    echo '    # React app' >> /etc/nginx/http.d/default.conf && \
     echo '    location / {' >> /etc/nginx/http.d/default.conf && \
+    echo '        root /usr/share/nginx/html;' >> /etc/nginx/http.d/default.conf && \
+    echo '        index index.html;' >> /etc/nginx/http.d/default.conf && \
     echo '        try_files $uri $uri/ /index.html;' >> /etc/nginx/http.d/default.conf && \
     echo '    }' >> /etc/nginx/http.d/default.conf && \
     echo '}' >> /etc/nginx/http.d/default.conf

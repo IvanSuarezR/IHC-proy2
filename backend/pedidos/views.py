@@ -5,6 +5,7 @@ from .models import Pedido
 from .serializers import PedidoSerializer
 from delivery.services import asignar_pedido
 from delivery.models import Conductor
+from .bot_notifications import enviar_confirmacion_pedido, enviar_actualizacion_estado
 
 class PedidoViewSet(viewsets.ModelViewSet):
     queryset = Pedido.objects.all()
@@ -87,4 +88,40 @@ class PedidoViewSet(viewsets.ModelViewSet):
                 # La respuesta debe informar al conductor que su rechazo fue procesado.
                 return Response({'status': 'pedido rechazado, buscando nuevo conductor o marcado como disponible'}, status=status.HTTP_200_OK)
         
-        return super().partial_update(request, *args, **kwargs)
+        # Guardar la respuesta del update
+        response = super().partial_update(request, *args, **kwargs)
+        
+        # Enviar notificación al usuario si el estado cambió
+        if estado:
+            pedido.refresh_from_db()
+            
+            # Mensajes personalizados según el estado
+            mensajes_extra = {
+                'aceptado': '¡Un conductor ha aceptado tu pedido! 🚗',
+                'recibido': '¡Tu pedido está en camino! El conductor lo ha recogido. 🚚',
+                'entregado': '¡Tu pedido ha sido entregado! Esperamos que lo disfrutes. 😊',
+                'cancelado': 'Tu pedido ha sido cancelado. 😔',
+            }
+            
+            mensaje = mensajes_extra.get(estado)
+            enviar_actualizacion_estado(pedido, mensaje)
+        
+        return response
+    
+    def create(self, request, *args, **kwargs):
+        """
+        Sobrescribir el método create para enviar notificación cuando se crea un pedido
+        """
+        response = super().create(request, *args, **kwargs)
+        
+        if response.status_code == 201:
+            # Obtener el pedido recién creado
+            pedido_id = response.data.get('id')
+            try:
+                pedido = Pedido.objects.get(id=pedido_id)
+                # Enviar confirmación al usuario
+                enviar_confirmacion_pedido(pedido)
+            except Pedido.DoesNotExist:
+                pass
+        
+        return response
