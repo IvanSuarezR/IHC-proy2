@@ -36,10 +36,10 @@ RUN mkdir -p /run/nginx && \
     sed -i 's/listen       80;/listen       8080;/g' /etc/nginx/http.d/default.conf || \
     echo 'server { listen 8080; root /usr/share/nginx/html; index index.html; location / { try_files $uri $uri/ /index.html; } }' > /etc/nginx/http.d/default.conf
 
-# Crear script de inicio que ejecute Nginx y el bot
+# Crear script de inicio que ejecute el bot en segundo plano y luego Nginx
 RUN echo '#!/bin/sh' > /start.sh && \
-    echo 'nginx' >> /start.sh && \
-    echo 'cd /app && node Bot/bot.js' >> /start.sh && \
+    echo 'cd /app && node Bot/bot.js &' >> /start.sh && \
+    echo 'nginx -g "daemon off;"' >> /start.sh && \
     chmod +x /start.sh
 
 EXPOSE 8080
