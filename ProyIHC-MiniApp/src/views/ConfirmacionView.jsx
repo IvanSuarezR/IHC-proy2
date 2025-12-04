@@ -92,14 +92,9 @@ function ConfirmacionView({ cartItems, navigate, direccion }) {
   return (
     <div className="confirm-container">
       <div className="confirm-icon">✔</div>
-      <div className="confirm-image-space">
-        <img src={kingLogo} alt="King Logo" className="logo" />
-      </div>
       <h2 className="confirm-title">Pedido Confirmado</h2>
 
-      {/* ============================= */}
       {/* DETALLES DEL PEDIDO ESTILO CARD */}
-      {/* ============================= */}
       <div className="confirm-details">
         <p className="confirm-subtitle">Descripción del pedido:</p>
         {cartItems.map((item) => (
@@ -110,12 +105,12 @@ function ConfirmacionView({ cartItems, navigate, direccion }) {
         ))}
         <div className="confirm-item-card total">
           <span><strong>Total del pedido:</strong></span>
-          <span><strong>${total.toFixed(2)}</strong></span>
+          <span><strong>Bs. {total.toFixed(2)}</strong></span>
         </div>
-        <div className="confirm-item-card status">
+        {/* <div className="confirm-item-card status">
           <span><strong>Estado:</strong></span>
-          <span>Pagado ✅</span>
-        </div>
+          <span>Pendiente ✅</span>
+        </div> */}
       </div>
 
       <h3 className="confirm-status">🚚 PEDIDO EN CAMINO</h3>

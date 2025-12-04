@@ -14,8 +14,13 @@ class PedidoViewSet(viewsets.ModelViewSet):
         """
         Filtra los pedidos para mostrar solo los disponibles o asignados al conductor actual (si existiera autenticacion)
         """
-        # Aqui deberiamos filtrar por conductor autenticado, pero por simplicidad retornamos todo
-        # O retornamos solo los pendientes/buscando si es una lista publica
+        # Filtrar por telegram_id si se proporciona como query param
+        telegram_id = self.request.query_params.get('telegram_id', None)
+        
+        if telegram_id:
+            return Pedido.objects.filter(telegram_id=telegram_id).order_by('-created_at')
+        
+        # Retornar todos los pedidos ordenados por fecha
         return Pedido.objects.all().order_by('-created_at')
 
     def partial_update(self, request, *args, **kwargs):

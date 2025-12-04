@@ -21,20 +21,28 @@
 /* =============================
    LOGO
 ============================= */
-.logo {
-  width: 140px;
-  max-width: 35vw;
-  height: auto;
+.confirm-image-space {
+  width: 100%;
+  max-width: 160px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
+.logo {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
   animation: fadeIn 0.7s ease-out;
   border: 3px solid #e0c521;
   border-radius: 12px;
-  padding: 5px;
+  box-sizing: border-box;
 }
 
 @media (min-width: 768px) {
-  .logo {
-    width: 180px;
+  .confirm-image-space {
+    max-width: 200px;
   }
 }
 

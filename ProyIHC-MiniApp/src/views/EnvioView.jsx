@@ -152,7 +152,7 @@ function EnvioView({ cartItems, navigate, direccion, setDireccion }) {
           {cartItems.map((item) => (
             <div className="envio-item-new" key={item.id}>
               <span>{item.title} x {item.quantity}</span>
-              <span>${(item.price * item.quantity).toFixed(2)}</span>
+              <span>Bs. {(item.price * item.quantity).toFixed(2)}</span>
             </div>
           ))}
         </div>
@@ -162,16 +162,16 @@ function EnvioView({ cartItems, navigate, direccion, setDireccion }) {
           <h2 className="envio-section-title-new">Resumen</h2>
           <div className="envio-row-new">
             <span>Delivery</span>
-            <span>${delivery}</span>
+            <span>Bs. {delivery}</span>
           </div>
           <div className="envio-row-new">
             <span>Descuento</span>
-            <span>- ${discount.toFixed(2)}</span>
+            <span>- Bs. {discount.toFixed(2)}</span>
           </div>
           <div className="envio-total-row-new">
             <strong>Total</strong>
             <strong className="envio-total-amount-new">
-              ${total.toFixed(2)}
+              Bs. {total.toFixed(2)}
             </strong>
           </div>
         </div>

@@ -6,6 +6,8 @@ import CarritoView from "./views/CarritoView.jsx";
 import EnvioView from "./views/EnvioView.jsx";
 import PagoView from "./views/PagoView.jsx";
 import ConfirmacionView from "./views/ConfirmacionView.jsx";
+import HistorialView from "./views/HistorialView.jsx";
+
 function App() {
   const [currentView, setCurrentView] = useState("menu");
   const [cartItems, setCartItems] = useState([]);
@@ -66,7 +68,13 @@ function App() {
           direccion={direccion}
         />
       )}
-
+      {/* Vista de historial de pedidos */}
+      {currentView === "historial" && (
+        <HistorialView
+          cartItems={cartItems}
+          navigate={navigate}
+        />
+      )}
     </>
   );
 }

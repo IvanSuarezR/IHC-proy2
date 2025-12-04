@@ -12,7 +12,9 @@
   align-items: center;
   box-sizing: border-box;
   border-radius: 0 0 10px 10px;
-  position: relative;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 /* Logo izquierda */
@@ -76,3 +78,30 @@
   padding: 5px;
 }
 
+/* Contenedor derecho para agrupar botones */
+.menu-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Botón de historial */
+.menu-history-btn {
+  background: transparent;
+  border: 2px solid #FFC107;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  font-size: 1.5rem;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.menu-history-btn:hover {
+  background-color: #FFC107;
+  transform: scale(1.05);
+}

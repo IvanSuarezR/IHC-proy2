@@ -41,23 +41,23 @@ function PagoView({ cartItems, navigate }) {
           {cartItems.map((item) => (
             <div className="pago-item-new" key={item.id}>
               <span>{item.title} x {item.quantity}</span>
-              <span>${(item.price * item.quantity).toFixed(2)}</span>
+              <span>Bs. {(item.price * item.quantity).toFixed(2)}</span>
             </div>
           ))}
 
           <div className="pago-row-new">
             <span>Delivery</span>
-            <span>${delivery}</span>
+            <span>Bs. {delivery}</span>
           </div>
 
           <div className="pago-row-new">
             <span>Descuento</span>
-            <span>- ${discount.toFixed(2)}</span>
+            <span>- Bs. {discount.toFixed(2)}</span>
           </div>
 
           <div className="pago-total-row-new">
             <strong>Total</strong>
-            <strong>${total.toFixed(2)}</strong>
+            <strong>Bs. {total.toFixed(2)}</strong>
           </div>
         </div>
 

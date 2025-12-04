@@ -10,6 +10,7 @@ function Header({
   navigate,
   showCart = true,
   showBack = false,
+  showHistory = true,
   onBack
 }) {
   const totalItems = cartItems.reduce(
@@ -26,29 +27,41 @@ function Header({
       {/* TÍTULO CENTRADO */}
       <h1 className="menu-header-title">{title}</h1>
 
-      {/* LADO DERECHO: BACK O CARRITO */}
-      {showBack ? (
-        <button
-          className="menu-back-btn"
-          onClick={onBack || (() => navigate("menu"))}
-        >
-          ⬅
-        </button>
-      ) : showCart ? (
-        <button
-          className="menu-header-cart"
-          onClick={() => navigate("carrito")}
-        >
-          <img src={cartIcon} className="menu-cart-icon" alt="Cart" />
+      {/* LADO DERECHO: BACK, HISTORIAL O CARRITO */}
+      <div className="menu-header-right">
+        {showBack ? (
+          <button
+            className="menu-back-btn"
+            onClick={onBack || (() => navigate("menu"))}
+          >
+            ⬅
+          </button>
+        ) : (
+          <>
+            {showHistory && (
+              <button
+                className="menu-history-btn"
+                onClick={() => navigate("historial")}
+                title="Ver historial de pedidos"
+              >
+                📋
+              </button>
+            )}
+            {showCart && (
+              <button
+                className="menu-header-cart"
+                onClick={() => navigate("carrito")}
+              >
+                <img src={cartIcon} className="menu-cart-icon" alt="Cart" />
 
-          {totalItems > 0 && (
-            <div className="menu-cart-badge-new">{totalItems}</div>
-          )}
-        </button>
-      ) : (
-        // Mantener simetría si no hay back ni cart
-        <div style={{ width: "58px" }}></div>
-      )}
+                {totalItems > 0 && (
+                  <div className="menu-cart-badge-new">{totalItems}</div>
+                )}
+              </button>
+            )}
+          </>
+        )}
+      </div>
     </header>
   );
 }
