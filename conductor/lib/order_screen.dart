@@ -29,6 +29,12 @@ class _OrderScreenState extends State<OrderScreen> {
   Timer? _timer;
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
+  // Paleta de colores
+  static const Color primaryRed = Color(0xFFD32F2F);
+  static const Color accentYellow = Color(0xFFFFC107);
+  static const Color lightYellow = Color(0xFFFFF9C4);
+  static const Color darkRed = Color(0xFFB71C1C);
+
   @override
   void initState() {
     super.initState();
@@ -53,7 +59,7 @@ class _OrderScreenState extends State<OrderScreen> {
   void _initializeLocalNotifications() {
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher'); // Ensure you have this icon
+        AndroidInitializationSettings('@mipmap/ic_launcher');
     const InitializationSettings initializationSettings =
         InitializationSettings(android: initializationSettingsAndroid);
     flutterLocalNotificationsPlugin.initialize(initializationSettings);
@@ -66,8 +72,6 @@ class _OrderScreenState extends State<OrderScreen> {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
 
-      // If `onMessage` is triggered with a notification, construct our own
-      // local notification to show to users.
       if (notification != null && android != null) {
         flutterLocalNotificationsPlugin.show(
             notification.hashCode,
@@ -75,8 +79,8 @@ class _OrderScreenState extends State<OrderScreen> {
             notification.body,
             const NotificationDetails(
               android: AndroidNotificationDetails(
-                'high_importance_channel', // channel id from main.dart
-                'High Importance Notifications', // channel name from main.dart
+                'high_importance_channel',
+                'High Importance Notifications',
                 channelDescription: 'This channel is used for important notifications.',
                 icon: '@mipmap/ic_launcher',
                 importance: Importance.max,
@@ -85,8 +89,6 @@ class _OrderScreenState extends State<OrderScreen> {
               ),
             ));
       }
-
-      // Always reload the order list
       _loadPedidos();
     });
   }
@@ -112,9 +114,7 @@ class _OrderScreenState extends State<OrderScreen> {
     }
   }
 
-  // Lógica mejorada para actualizar pedido y gestionar navegación
   Future<void> _actualizarEstadoPedido(int id, String estado) async {
-    // Si aceptamos, verificamos localmente si podemos (aunque el backend también restringe)
     if (estado == 'aceptado') {
       try {
         await apiService.actualizarPedido(id, estado);
@@ -123,10 +123,8 @@ class _OrderScreenState extends State<OrderScreen> {
            ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Pedido aceptado.')),
           );
-          _loadPedidos(); // Recargar lista
+          _loadPedidos();
           
-          // Navegar automáticamente a detalles
-           // Buscamos el pedido actualizado para pasarlo
            final updatedPedidos = await apiService.getPedidos();
            final acceptedOrder = updatedPedidos.firstWhere((p) => p['id'] == id, orElse: () => null);
            
@@ -137,12 +135,11 @@ class _OrderScreenState extends State<OrderScreen> {
       } catch (e) {
          if (mounted) {
            ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: $e')), // Mostrará el mensaje del backend si ya tiene pedido
+            SnackBar(content: Text('Error: $e')),
           );
          }
       }
     } else {
-        // Otros estados (rechazar, etc)
         apiService.actualizarPedido(id, estado).then((_) {
           _loadPedidos();
           if (estado == 'rechazado') {
@@ -159,28 +156,21 @@ class _OrderScreenState extends State<OrderScreen> {
   }
 
   Future<void> _navigateToDetail(Map<String, dynamic> pedido) async {
-    // Usamos pushReplacement si ya estamos en un flujo obligatorio, pero push normal permite volver si el pedido no esta terminado.
-    // Sin embargo, si queremos bloquear la lista, lo ideal es push y en OrderDetailScreen bloquear el back.
-    // Si el pedido se completa, OrderDetailScreen hace pop(true).
-    
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => OrderDetailScreen(pedido: pedido),
       ),
     );
-    // Si retornó true (pedido completado), recargamos la lista para ver nuevos
     if (result == true) {
       _loadPedidos();
     } else {
-      // Si volvió sin completar (ej: cancelado o solo back), recargamos por si acaso
       _loadPedidos();
     }
   }
 
   Future<void> _logout() async {
     try {
-      // Stop the location service
       LocationService().stop();
       
       await apiService.desactivarConductor(widget.conductorId);
@@ -202,13 +192,6 @@ class _OrderScreenState extends State<OrderScreen> {
     }
   }
   
-  // Custom API Service call override to include conductor_id in body for "aceptado"/"rechazado" checks
-  // Dart doesn't support easy monkey-patching so we extend/modify behavior here or assume apiService handles it.
-  // The ApiService class provided earlier didn't take conductor_id. 
-  // We need to pass conductor_id to the backend for validation.
-  // Since I cannot easily modify ApiService across files without reading/writing it again, 
-  // I will implement a specific update function here that includes the conductor_id.
-  
   Future<void> _actualizarPedidoConConductor(int pedidoId, String estado) async {
       final url = Uri.parse('${apiService.baseUrl}/pedidos/$pedidoId/');
       
@@ -219,12 +202,11 @@ class _OrderScreenState extends State<OrderScreen> {
         },
         body: jsonEncode(<String, dynamic>{
           'estado': estado,
-          'conductor_id': widget.conductorId, // Enviamos el ID del conductor
+          'conductor_id': widget.conductorId,
         }),
       );
 
       if (response.statusCode != 200) {
-        // Intentar parsear el error del backend
         try {
             final errorBody = jsonDecode(response.body);
             throw Exception(errorBody['error'] ?? 'Failed to update pedido');
@@ -234,7 +216,6 @@ class _OrderScreenState extends State<OrderScreen> {
       }
   }
   
-  // Sobrescribimos la llamada anterior para usar nuestra funcion con ID
   void _procesarAccionPedido(int id, String estado) {
       if (estado == 'aceptado' || estado == 'rechazado') {
            _actualizarPedidoConConductor(id, estado).then((_) async {
@@ -245,7 +226,6 @@ class _OrderScreenState extends State<OrderScreen> {
                   _loadPedidos();
 
                   if (estado == 'aceptado') {
-                       // Navegacion automatica
                        final updatedPedidos = await apiService.getPedidos();
                        final acceptedOrder = updatedPedidos.firstWhere((p) => p['id'] == id, orElse: () => null);
                        if (acceptedOrder != null && mounted) {
@@ -261,35 +241,57 @@ class _OrderScreenState extends State<OrderScreen> {
                }
            });
       } else {
-          // Para otros estados (recibido, entregado) usamos la api normal o la misma
           _actualizarEstadoPedido(id, estado);
       }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: Text('${widget.conductorNombre} (ID: ${widget.conductorId})'),
+        elevation: 0,
+        backgroundColor: primaryRed,
+        foregroundColor: Colors.white,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              widget.conductorNombre,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'ID: ${widget.conductorId}',
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w300),
+            ),
+          ],
+        ),
         leading: IconButton(
-            icon: const Icon(Icons.logout),
+            icon: const Icon(Icons.logout, color: Colors.white),
             onPressed: _logout,
             tooltip: 'Cambiar Conductor',
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: _activo ? Colors.green : Colors.red[300],
+              borderRadius: BorderRadius.circular(20),
+            ),
             child: Row(
               children: [
-                Icon(Icons.circle, color: _activo ? Colors.green : Colors.red, size: 12),
-                const SizedBox(width: 4),
-                Text(_activo ? 'Activo' : 'Inactivo', style: const TextStyle(fontSize: 12)),
+                Icon(Icons.circle, color: Colors.white, size: 10),
+                const SizedBox(width: 6),
+                Text(
+                  _activo ? 'Activo' : 'Inactivo',
+                  style: const TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.w600),
+                ),
               ],
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.map),
+            icon: const Icon(Icons.map, color: Colors.white),
             onPressed: () {
               Navigator.push(
                 context,
@@ -300,8 +302,9 @@ class _OrderScreenState extends State<OrderScreen> {
         ],
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator(color: primaryRed))
           : RefreshIndicator(
+              color: primaryRed,
               onRefresh: _loadPedidos,
               child: _buildPedidosList(),
             ),
@@ -310,18 +313,25 @@ class _OrderScreenState extends State<OrderScreen> {
 
   Widget _buildPedidosList() {
     if (_pedidos.isEmpty) {
-      return const Center(child: Text('No hay pedidos disponibles'));
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.inbox_outlined, size: 80, color: Colors.grey[400]),
+            const SizedBox(height: 16),
+            Text(
+              'No hay pedidos disponibles',
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+            ),
+          ],
+        ),
+      );
     }
 
     final pedidosFiltrados = _pedidos.where((p) {
       final estado = p['estado'];
       final conductorAsignado = p['conductor'];
       
-      // Conductor puede ver pedidos:
-      // 1. Disponibles para todos.
-      // 2. Pendientes (lógica original, por si acaso).
-      // 3. Que se le están buscando a ÉL específicamente.
-      // 4. Que ÉL ha aceptado o tiene en curso.
       if (estado == 'disponible' || estado == 'pendiente') return true;
       if (estado == 'buscando' && conductorAsignado == widget.conductorId) return true;
       if (conductorAsignado == widget.conductorId && (estado == 'aceptado' || estado == 'recibido')) return true;
@@ -342,67 +352,350 @@ class _OrderScreenState extends State<OrderScreen> {
     }
 
     if (listaAMostrar.isEmpty) {
-      return const Center(child: Text('No hay pedidos activos para ti'));
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.assignment_outlined, size: 80, color: Colors.grey[400]),
+            const SizedBox(height: 16),
+            Text(
+              'No hay pedidos activos para ti',
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+            ),
+          ],
+        ),
+      );
     }
 
     return ListView.builder(
+      padding: const EdgeInsets.all(12),
       itemCount: listaAMostrar.length,
       itemBuilder: (context, index) {
         final pedido = listaAMostrar[index];
         final esMio = pedido['conductor'] == widget.conductorId;
+        final estado = pedido['estado'];
         
-        return Card(
-          margin: const EdgeInsets.all(8.0),
-          color: esMio ? Colors.blue.shade50 : null,
-          child: Column(
-            children: [
-              ListTile(
-                title: Text('Pedido #${pedido['id']} - ${pedido['first_name']}'),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Dirección: ${pedido['direccion']}'),
-                    Text('Total: ${pedido['total']} Bs'),
-                     if (pedido['estado'] == 'aceptado') ...[
-                        const Text('Estado: ACEPTADO - Ve al restaurante', style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold)),
-                     ],
-                     if (pedido['estado'] == 'recibido') ...[
-                        const Text('Estado: EN RUTA - Ve al cliente', style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
-                     ],
-                    const SizedBox(height: 8),
-                    const Text('Productos:', style: TextStyle(fontWeight: FontWeight.bold)),
-                    ...(pedido['productos'] as List).map((p) => Text('- ${p['cantidad']}x ${p['nombre']}')),
-                  ],
-                ),
-                isThreeLine: true,
-                onTap: esMio ? () => _navigateToDetail(pedido) : null,
+        return Container(
+          margin: const EdgeInsets.only(bottom: 16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
               ),
-              ButtonBar(
-                children: [
-                  if (pedido['estado'] == 'buscando' || pedido['estado'] == 'pendiente' || pedido['estado'] == 'disponible') ...[
-                    if (pedido['estado'] == 'disponible')
-                      Chip(label: Text('DISPONIBLE PARA TODOS'), backgroundColor: Colors.amber.shade100),
-                    const SizedBox(width: 8),
-                    TextButton.icon(
-                      icon: const Icon(Icons.check, color: Colors.green),
-                      label: const Text('ACEPTAR', style: TextStyle(color: Colors.green)),
-                      onPressed: () => _procesarAccionPedido(pedido['id'], 'aceptado'),
-                    ),
-                    TextButton.icon(
-                      icon: const Icon(Icons.close, color: Colors.red),
-                      label: const Text('RECHAZAR', style: TextStyle(color: Colors.red)),
-                      onPressed: () => _procesarAccionPedido(pedido['id'], 'rechazado'),
-                    ),
-                  ] else if (esMio) ...[
-                     ElevatedButton.icon(
-                      icon: const Icon(Icons.visibility),
-                      label: const Text('VER DETALLES Y GESTIONAR'),
-                      onPressed: () => _navigateToDetail(pedido),
-                    ),
-                  ],
-                ],
-              )
             ],
+          ),
+          child: Material(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(16),
+              onTap: esMio ? () => _navigateToDetail(pedido) : null,
+              child: Column(
+                children: [
+                  // Header del pedido
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: esMio ? primaryRed.withOpacity(0.1) : lightYellow,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(16),
+                        topRight: Radius.circular(16),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: esMio ? primaryRed : accentYellow,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(
+                            esMio ? Icons.directions_bike : Icons.receipt_long,
+                            color: Colors.white,
+                            size: 24,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Pedido #${pedido['id']}',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: esMio ? primaryRed : darkRed,
+                                ),
+                              ),
+                              Text(
+                                pedido['first_name'],
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (estado == 'disponible')
+                          Flexible(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(
+                                color: accentYellow,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: const Text(
+                                'DISPONIBLE',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  color: darkRed,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  
+                  // Body del pedido
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Dirección
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(Icons.location_on, size: 20, color: primaryRed),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                pedido['direccion'],
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        
+                        // Total
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.green[50],
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.green[200]!),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(Icons.payments, color: Colors.green[700], size: 20),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Total a cobrar:',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                              const Spacer(),
+                              Text(
+                                '${pedido['total']} Bs',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.green[700],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        
+                        const SizedBox(height: 12),
+                        
+                        // Estado actual
+                        if (estado == 'aceptado')
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.orange[50],
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.orange[300]!),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(Icons.store, color: Colors.orange[700], size: 20),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    'ACEPTADO - Ve al restaurante',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.orange[700],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        
+                        if (estado == 'recibido')
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.blue[50],
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.blue[300]!),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(Icons.delivery_dining, color: Colors.blue[700], size: 20),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    'EN RUTA - Ve al cliente',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.blue[700],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        
+                        const SizedBox(height: 12),
+                        
+                        // Productos
+                        const Text(
+                          'Productos:',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        ...(pedido['productos'] as List).map((p) => Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: accentYellow.withOpacity(0.3),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text(
+                                  '${p['cantidad']}x',
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  p['nombre'],
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )),
+                      ],
+                    ),
+                  ),
+                  
+                  // Botones de acción
+                  if (estado == 'buscando' || estado == 'pendiente' || estado == 'disponible')
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[50],
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(16),
+                          bottomRight: Radius.circular(16),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: () => _procesarAccionPedido(pedido['id'], 'aceptado'),
+                              icon: const Icon(Icons.check_circle, size: 20),
+                              label: const Text('ACEPTAR'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                elevation: 0,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: () => _procesarAccionPedido(pedido['id'], 'rechazado'),
+                              icon: const Icon(Icons.cancel, size: 20),
+                              label: const Text('RECHAZAR'),
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: primaryRed,
+                                side: BorderSide(color: primaryRed, width: 2),
+                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  else if (esMio)
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[50],
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(16),
+                          bottomRight: Radius.circular(16),
+                        ),
+                      ),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: () => _navigateToDetail(pedido),
+                          icon: const Icon(Icons.visibility),
+                          label: const Text('VER DETALLES Y GESTIONAR'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: primaryRed,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            elevation: 0,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
           ),
         );
       },

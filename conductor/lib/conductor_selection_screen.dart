@@ -20,6 +20,9 @@ class _ConductorSelectionScreenState extends State<ConductorSelectionScreen> {
   late Stream<List<dynamic>> _conductoresStream;
   late StreamController<List<dynamic>> _streamController;
 
+  // Paleta de colores
+  static const Color primaryRed = Color(0xFFD32F2F);
+
   @override
   void initState() {
     super.initState();
@@ -37,9 +40,7 @@ class _ConductorSelectionScreenState extends State<ConductorSelectionScreen> {
   }
 
   void _startFetchingConductores() {
-    // Fetch immediately
     _fetchConductores();
-    // Then fetch periodically
     Timer.periodic(const Duration(seconds: 10), (timer) {
       if (mounted) {
         _fetchConductores();
@@ -72,8 +73,7 @@ class _ConductorSelectionScreenState extends State<ConductorSelectionScreen> {
         await apiService.activarConductor(savedConductorId);
         _navigateToOrderScreen(context, savedConductorName, savedConductorId);
       } catch (e) {
-        // Si falla la reactivación, no hacemos nada y dejamos que el usuario elija de nuevo.
-        // Podríamos mostrar un error, pero es mejor simplemente no hacer login automático.
+        // Si falla la reactivación, dejamos que el usuario elija de nuevo
       }
     }
   }
@@ -84,10 +84,8 @@ class _ConductorSelectionScreenState extends State<ConductorSelectionScreen> {
 
   Future<void> _selectConductor(int id, String nombre) async {
     try {
-      // Obtener token FCM
       String? fcmToken;
       if (kReleaseMode) {
-        // 1. Solicitar permisos de notificación (clave para la inicialización)
         FirebaseMessaging messaging = FirebaseMessaging.instance;
         NotificationSettings settings = await messaging.requestPermission(
           alert: true,
@@ -101,7 +99,6 @@ class _ConductorSelectionScreenState extends State<ConductorSelectionScreen> {
 
         print('Permisos de notificación concedidos: ${settings.authorizationStatus}');
 
-        // 2. Si los permisos están concedidos, obtener el token
         if (settings.authorizationStatus == AuthorizationStatus.authorized) {
           try {
             fcmToken = await FirebaseMessaging.instance.getToken();
@@ -114,14 +111,12 @@ class _ConductorSelectionScreenState extends State<ConductorSelectionScreen> {
         }
       }
       
-      // Activar conductor y enviar token
       await apiService.activarConductor(id, fcmToken: fcmToken);
       
       final prefs = await SharedPreferences.getInstance();
       await prefs.setInt('conductor_id', id);
       await prefs.setString('conductor_nombre', nombre);
 
-      // Start the location service
       LocationService().init();
       
       if (mounted) {
@@ -149,13 +144,19 @@ class _ConductorSelectionScreenState extends State<ConductorSelectionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Seleccionar Perfil de Conductor'),
+        backgroundColor: primaryRed,
+        foregroundColor: Colors.white,
+        title: const Text(
+          'Seleccionar Perfil de Conductor',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        elevation: 0,
       ),
       body: StreamBuilder<List<dynamic>>(
         stream: _conductoresStream,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting && !snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator(color: primaryRed));
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -168,7 +169,11 @@ class _ConductorSelectionScreenState extends State<ConductorSelectionScreen> {
                 final conductor = snapshot.data![index];
                 return ListTile(
                   leading: CircleAvatar(
-                    child: Text(conductor['nombre'][0].toUpperCase()),
+                    backgroundColor: primaryRed,
+                    child: Text(
+                      conductor['nombre'][0].toUpperCase(),
+                      style: const TextStyle(color: Colors.white),
+                    ),
                   ),
                   title: Text(conductor['nombre']),
                   subtitle: Text(conductor['activo'] ? 'Activo' : 'Inactivo'),
