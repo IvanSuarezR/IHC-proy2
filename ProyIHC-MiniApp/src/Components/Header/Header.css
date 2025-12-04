@@ -1,17 +1,78 @@
-/* Header.css */
-.header {
+/* =============================
+      HEADER UNIFICADO
+============================= */
+
+.menu-header-new {
+  width: 100%;
+  max-width: 500px;
+  background-color: #c01d2e;
+  padding: 13px;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
+  box-sizing: border-box;
+  border-radius: 0 0 10px 10px;
+  position: relative;
 }
 
-.logo {
-  width: 50px;
-  height: 50px;
+/* Logo izquierda */
+.menu-logo-new {
+  width: 70px;
+  height: 70px;
+  border-radius: 100px;
+  object-fit: cover;
+  border: 3px solid #FFC107;
+  margin-bottom: 6px;
 }
 
-.heading {
-  font-size: 24px;
+/* Título */
+.menu-header-title {
+  color: white;
+  font-size: 1.8rem;
   font-weight: bold;
+  text-align: center;
+  flex: 1;
 }
+
+/* Botón carrito */
+.menu-header-cart {
+  position: relative;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+/* Ícono de carrito */
+.menu-cart-icon {
+  border-radius: 30%;
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+}
+
+/* Badge del carrito */
+.menu-cart-badge-new {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  background-color: #FFC107;
+  color: black;
+  font-weight: bold;
+  font-size: 0.7rem;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.menu-back-btn {
+  background: transparent;
+  border: none;
+  font-size: 3rem;
+  color: white;
+  cursor: pointer;
+  padding: 5px;
+}
+

@@ -1,53 +1,84 @@
 // src/views/PagoView.jsx
 import React, { useState } from "react";
 import "./PagoView.css";
-import Modal from "../Components/Modal/Modal";
+import Modal from "../Components/Modal/Modal.jsx";
+import Header from "../Components/Header/Header.jsx";
 
 function PagoView({ cartItems, navigate }) {
   const [metodo, setMetodo] = useState("efectivo");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
-  const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
 
   const subtotal = cartItems.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0
   );
+
   const delivery = 2;
   const discount = subtotal * 0.002;
   const total = subtotal + delivery - discount;
 
   return (
-    <>
-      <div className="pago-container">
-        <h2> Método de Pago</h2>
+    <div className="pago-container">
 
-        <div className="pago-resumen">
+      {/* HEADER GLOBAL */}
+      <Header
+        title="Método de Pago"
+        navigate={navigate}
+        cartItems={cartItems}
+        showCart={false}
+        showBack={true}
+        onBack={() => navigate("envio")}
+      />
+
+      {/* CONTENIDO */}
+      <div className="pago-content-new">
+
+        {/* RESUMEN DEL PEDIDO */}
+        <div className="pago-card-new">
+          <h2 className="pago-section-title-new">Tu Pedido</h2>
+
           {cartItems.map((item) => (
-            <p key={item.id}>
-              {item.title} ({item.quantity}) — ${item.price * item.quantity}
-            </p>
+            <div className="pago-item-new" key={item.id}>
+              <span>{item.title} x {item.quantity}</span>
+              <span>${(item.price * item.quantity).toFixed(2)}</span>
+            </div>
           ))}
-          <p>Delivery: ${delivery}</p>
-          <p>Descuento: -${discount.toFixed(2)}</p>
-          <h3>Total a pagar: ${total.toFixed(2)}</h3>
+
+          <div className="pago-row-new">
+            <span>Delivery</span>
+            <span>${delivery}</span>
+          </div>
+
+          <div className="pago-row-new">
+            <span>Descuento</span>
+            <span>- ${discount.toFixed(2)}</span>
+          </div>
+
+          <div className="pago-total-row-new">
+            <strong>Total</strong>
+            <strong>${total.toFixed(2)}</strong>
+          </div>
         </div>
 
-        <div className="pago-opciones">
-          {(
-              <div className="phone-input-container">
-                  <label>📞 Número de teléfono (Requerido):</label>
-                  <input
-                      type="tel"
-                      placeholder="Ej: 77777777"
-                      value={phoneNumber}
-                      onChange={(e) => setPhoneNumber(e.target.value)}
-                      className="phone-input"
-                  />
-              </div>
-          )}
+        {/* TELÉFONO */}
+        <div className="pago-card-new">
+          <h2 className="pago-section-title-new">Número de Contacto</h2>
 
-          <label>
+          <input
+            type="tel"
+            placeholder="Ej: 77777777"
+            value={phoneNumber}
+            onChange={(e) => setPhoneNumber(e.target.value)}
+            className="pago-input-new"
+          />
+        </div>
+
+        {/* MÉTODOS DE PAGO */}
+        <div className="pago-card-new">
+          <h2 className="pago-section-title-new">Selecciona un método</h2>
+
+          <label className="pago-radio-item">
             <input
               type="radio"
               name="metodo"
@@ -55,9 +86,10 @@ function PagoView({ cartItems, navigate }) {
               checked={metodo === "efectivo"}
               onChange={(e) => setMetodo(e.target.value)}
             />
-            💵 Efectivo
+            💵 Pago en efectivo
           </label>
-          <label>
+
+          <label className="pago-radio-item">
             <input
               type="radio"
               name="metodo"
@@ -67,7 +99,8 @@ function PagoView({ cartItems, navigate }) {
             />
             📱 Código QR
           </label>
-          <label>
+
+          <label className="pago-radio-item">
             <input
               type="radio"
               name="metodo"
@@ -75,32 +108,44 @@ function PagoView({ cartItems, navigate }) {
               checked={metodo === "tarjeta"}
               onChange={(e) => setMetodo(e.target.value)}
             />
-            💳 Tarjeta
+            💳 Tarjeta de débito/crédito
           </label>
         </div>
 
-        <div className="pago-buttons">
-          <button className="btn-volver" onClick={() => navigate("envio")}>
-            🔙 Volver
-          </button>
+        {/* BOTONES */}
+        <div className="pago-buttons-new">
           <button
-              className="btn-confirmar"
-              onClick={() => {
-                  // Siempre requerir teléfono, incluso si viene de Telegram, para asegurar contacto
-                  if (phoneNumber.trim() === "") {
-                      setErrorMessage("Por favor ingresa tu número de teléfono para que el repartidor pueda contactarte.");
-                      return;
-                  }
-                  sessionStorage.setItem('user_phone_number', phoneNumber);
-                  navigate("confirmacion");
-              }}
+            className="btn-volver-new"
+            onClick={() => navigate("envio")}
           >
-            ✅ Confirmar Pedido
+            Atras
+          </button>
+
+          <button
+            className="btn-confirmar-new"
+            onClick={() => {
+              if (phoneNumber.trim() === "") {
+                setErrorMessage("Ingresa tu número de teléfono para continuar.");
+                return;
+              }
+
+              sessionStorage.setItem("user_phone_number", phoneNumber);
+              sessionStorage.setItem("user_payment_method", metodo);
+
+              navigate("confirmacion");
+            }}
+          >
+            ✅ Confirmar
           </button>
         </div>
+
       </div>
-      <Modal message={errorMessage} onClose={() => setErrorMessage(null)} />
-    </>
+
+      <Modal
+        message={errorMessage}
+        onClose={() => setErrorMessage(null)}
+      />
+    </div>
   );
 }
 

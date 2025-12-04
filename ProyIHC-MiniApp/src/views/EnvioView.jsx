@@ -3,6 +3,8 @@ import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
 import "./EnvioView.css";
 import Modal from "../Components/Modal/Modal";
 import kingLogo from "../images/kingLogo.jpg";
+import Header from "../Components/Header/Header.jsx";
+
 
 const MapComponent = ({ onLocationSelect, onClose }) => {
   const [markerPosition, setMarkerPosition] = useState(null);
@@ -123,14 +125,15 @@ function EnvioView({ cartItems, navigate, direccion, setDireccion }) {
   return (
     <div className="envio-container">
 
-      {/* HEADER */}
-      <div className="envio-header-new">
-        <img src={kingLogo} alt="King Logo" className="menu-logo-new" />
+     <Header
+        title="Orden de Envio"
+        cartItems={cartItems}
+        navigate={navigate}
+        showCart={false}
+        showBack={true}
+        onBack={() => navigate("carrito")}
+      />
 
-        <div className="envio-header-title-new">Detalles del Envío</div>
-
-        
-      </div>
 
       {/* MAPA */}
       {showMap && (
@@ -199,7 +202,7 @@ function EnvioView({ cartItems, navigate, direccion, setDireccion }) {
             className="btn-back-new"
             onClick={() => navigate("carrito")}
           >
-            🔙 Volver
+            Volver
           </button>
 
           <button

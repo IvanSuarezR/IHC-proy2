@@ -4,7 +4,6 @@
 .envio-container {
   min-height: 100vh;
   background-color: #FFF9F0;
-  padding: 0 0px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -12,58 +11,23 @@
 }
 
 /* =============================
-   HEADER ESTILO MENU PRINCIPAL (FULL WIDTH)
-============================= */
-.envio-header-new {
-  width: 100%; /* ocupa todo el ancho disponible */
-  background-color: #c01d2e;
-  padding: 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-sizing: border-box;
-  position: relative;
-}
-
-.envio-header-title-new {
-  color: white;
-  font-size: 1.6rem;
-  font-weight: bold;
-  text-align: center;
-  flex: 1;
-}
-
-.envio-header-back-new {
-  background: transparent;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-}
-
-/* Logo */
-.menu-logo-new {
-  width: 65px;
-  height: 65px;
-  border-radius: 100px;
-  object-fit: cover;
-  margin-right: 10px;
-  border: 3px solid #FFC107;
-}
-
-/* =============================
-   TARJETAS Y LISTAS
+   CONTENEDOR DEL CONTENIDO (igual a Carrito)
 ============================= */
 .envio-content-new {
   width: 100%;
   max-width: 500px;
   margin-top: 15px;
-  padding: 0 10px;
+  padding: 0 12px;
+  box-sizing: border-box;
 }
 
+/* =============================
+   TARJETAS
+============================= */
 .envio-card-new {
   background: white;
   border-radius: 12px;
-  padding: 10px; /* ajustado a 10px */
+  padding: 10px;
   margin-bottom: 14px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.08);
 }
@@ -74,6 +38,7 @@
   margin-bottom: 10px;
 }
 
+/* filas de items */
 .envio-item-new,
 .envio-row-new {
   display: flex;
@@ -83,6 +48,7 @@
   color: #333;
 }
 
+/* total final */
 .envio-total-row-new {
   display: flex;
   justify-content: space-between;
@@ -122,11 +88,19 @@
   font-size: 1.1rem;
 }
 
+/* botón mapa */
 .envio-btn-mapa-new {
   background-color: #4caf50;
   color: white;
   width: 100%;
   margin-bottom: 10px;
+}
+
+/* botones inferior */
+.envio-buttons-new {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
 }
 
 .btn-back-new {
@@ -143,14 +117,8 @@
   margin-left: 5px;
 }
 
-.envio-buttons-new {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 12px;
-}
-
 /* =============================
-   MAPA MODAL
+   MODAL DEL MAPA
 ============================= */
 .map-modal {
   position: fixed;
@@ -171,9 +139,12 @@
   background-color: white;
   border-radius: 10px;
   padding: 20px;
+  box-sizing: border-box;
+  position: relative;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
+/* botones del mapa */
 .btn-confirmar-ubicacion {
   position: absolute;
   bottom: 10px;

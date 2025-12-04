@@ -13,6 +13,15 @@ function App() {
 
   const navigate = (view) => setCurrentView(view);
 
+  const reiniciarPedido = () => {
+    setCartItems([]);
+    setDireccion("");
+    // Si guardaste teléfono o coordenadas en sessionStorage:
+    sessionStorage.removeItem("user_phone_number");
+    sessionStorage.removeItem("pedido_lat");
+    sessionStorage.removeItem("pedido_lng");
+  };
+
   return (
     <>
       {/* Vista de menu principal */}
@@ -50,10 +59,14 @@ function App() {
       {currentView === "confirmacion" && (
         <ConfirmacionView
           cartItems={cartItems}
-          navigate={navigate}
+          navigate={(view) => {
+            if (view === "menu") reiniciarPedido();
+            setCurrentView(view);
+          }}
           direccion={direccion}
         />
       )}
+
     </>
   );
 }
